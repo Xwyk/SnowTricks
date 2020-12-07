@@ -205,6 +205,7 @@
 													"_parent": {
 														"$ref": "AAAAAAF2Pw9UaC9uQK4="
 													},
+													"visible": false,
 													"font": "Arial;13;0",
 													"left": 21,
 													"top": 68,
@@ -218,7 +219,7 @@
 											"left": 16,
 											"top": 31,
 											"width": 561,
-											"height": 55,
+											"height": 40,
 											"stereotypeLabel": {
 												"$ref": "AAAAAAF2Pw9UaC9vb0w="
 											},
@@ -240,6 +241,7 @@
 									"width": 561,
 									"height": 393,
 									"showNamespace": true,
+									"showProperty": false,
 									"nameCompartment": {
 										"$ref": "AAAAAAF2Pw9UaC9uQK4="
 									}
@@ -5234,7 +5236,7 @@
 							"_parent": {
 								"$ref": "AAAAAAF2Pw7H2S2hQ54="
 							},
-							"name": "User Management",
+							"name": "Connection",
 							"ownedElements": [
 								{
 									"_type": "UMLDependency",
@@ -12045,7 +12047,7 @@
 															"top": 38,
 															"width": 247,
 															"height": 13,
-															"text": "User Management"
+															"text": "Connection"
 														},
 														{
 															"_type": "LabelView",
