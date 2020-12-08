@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Figure;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -14,6 +16,11 @@ class FigureType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
+            ->add('medias', CollectionType::class, [
+                'entry_type' => MediaType::class,
+                'entry_options' => ['label' => false],
+                'allow_add'=>true
+            ])
         ;
     }
 

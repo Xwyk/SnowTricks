@@ -6,11 +6,16 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(
+ *     fields={"mailAddress"},
+ *     message="L'adresse mail que vous avez indiquée est déjà utilisée"
+ * )
  */
 class User implements UserInterface
 {
@@ -30,7 +35,6 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\Unique
      * @Assert\Email()
      */
     private $mailAddress;
@@ -39,12 +43,17 @@ class User implements UserInterface
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      * @Assert\NotBlank
+     * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire mnimum 8 caractères")
      */
     private $password;
 
     /**
+     * @Assert\EqualTo(propertyPath="password", message="Les mots de passe ne sont pas identiques")
+     */
+    private $confirmPassword;
+
+    /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotNull
      */
     private $creationDate;
 
@@ -98,7 +107,19 @@ class User implements UserInterface
         return $this->password;
     }
 
+    public function getConfirmPassword(): ?string
+    {
+        return $this->password;
+    }
+
     public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function setConfirmPassword(string $password): self
     {
         $this->password = $password;
 
