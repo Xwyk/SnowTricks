@@ -15,6 +15,7 @@ class FigureController extends AbstractController
      */
     public function show(FigureRepository $repository, $id): Response
     {
+
         $figure = $repository->find($id);
         return $this->render("snowtricks/figure.html.twig", ["figure" => $figure]);
     }
