@@ -47,7 +47,7 @@ class FigureController extends AbstractController
     public function addFigure(Request $request, ObjectManager $manager): Response
     {
         if (!($this->getUser())){
-            $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_login');
         }
         $figure = new Figure();
         $form = $this->createForm(FigureType::class, $figure);
