@@ -46,7 +46,6 @@ class FigureController extends AbstractController
      */
     public function addFigure(Request $request, ObjectManager $manager): Response
     {
-        dump($this->getUser());
         if (!($this->getUser())){
             $this->redirectToRoute('app_login');
         }
