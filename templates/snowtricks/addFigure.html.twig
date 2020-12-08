@@ -1,0 +1,13 @@
+{% extends "base.html.twig" %}
+{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% block body %}
+    {{ form_start(form) }}
+
+    {{ form_widget(form.name, {'attr' : {'placeholder' : 'Titre du nouvel article'}})}}
+
+    {{ form_widget(form.description, {'attr' : {'placeholder' : 'Description du nouvel article'}})}}
+
+    <button class="btn btn-success" type="submit">Ajouter l'article</button>
+
+    {{ form_end(form) }}
+{% endblock %}
