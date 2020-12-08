@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Figure;
+use App\Entity\User;
 use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\Persistence\ObjectManager;
@@ -45,14 +46,20 @@ class FigureController extends AbstractController
      */
     public function addFigure(Request $request, ObjectManager $manager): Response
     {
-
+        dump($this->getUser());
+        if (!($this->getUser())){
+            $this->redirectToRoute('app_login');
+        }
         $figure = new Figure();
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
-//        if ($form->isSubmitted() && $form->isValid()){
-//            $figure->setCreationDate(new \DateTime())
-//                   ->setAuthor
-//        }
+        if ($form->isSubmitted() && $form->isValid()){
+            $figure->setCreationDate(new \DateTime())
+                   ->setAuthor($this->getUser());
+            $manager->persist($figure);
+            $manager->flush();
+            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+       }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
 }
