@@ -12,4 +12,7 @@
         <p>Posté par {{ comment.author.pseudo }} le {{ comment.creationDate|date("d/m/Y à H:i") }} : {{ comment.content }}</p>
         <br>
     {% endfor %}
+    {% if app.user %}
+        Ajoute un commentaire
+    {% endif %}
 {% endblock %}
