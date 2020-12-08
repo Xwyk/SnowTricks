@@ -1,0 +1,7 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    {{ figure.author.pseudo }}
+    {{ figure.name }}
+    {{ figure.description }}
+    {{ figure.creationDate|date("d/m/Y à H:i") }}
+{% endblock %}
