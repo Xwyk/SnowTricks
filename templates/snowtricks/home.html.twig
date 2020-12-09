@@ -10,8 +10,10 @@
                     <img class="card-img-top" src="{{ figure.medias[0].url }}" alt="Card image cap">
                     <div class="card-title d-flex">
                         <div class="mr-auto p-2">{{ figure.name }}</div>
-                        <div class="p-2"><i class="fas fa-edit"></i></div>
-                        <div class="p-2"><i class="fas fa-edit"></i></div>
+                        {% if app.user %}
+                            <div class="p-2"><a href="{{ path('figure_edit', {'id':figure.id}) }}"><i class="fas fa-edit"></i></a></div>
+                            <div class="p-2"><i class="fas fa-edit"></i></div>
+                        {% endif %}
                     </div>
                 </div>
             </a>

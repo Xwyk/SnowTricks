@@ -41,20 +41,24 @@ class FigureController extends AbstractController
 
     /**
      * @Route("/addTrick", name="figure_add")
+     * @Route("/tricks/{id}/edit", name="figure_edit")
      * @param Request $request
      * @param ObjectManager $manager
+     * @param FigureRepository $repository
+     * @param null $id
      * @return Response
      */
-    public function addFigure(Request $request, ObjectManager $manager): Response
+    public function figure(Request $request, ObjectManager $manager, FigureRepository $repository, $id = null): Response
     {
         if (!($this->getUser())){
             return $this->redirectToRoute('app_login');
         }
-        $figure = new Figure();
-        $media = new Media();
-        $media1 = new Media();
-        $figure->addMedia($media);
-        $figure->addMedia($media1);
+        if ($id !== null){
+            $figure = $repository->find($id);
+        } else {
+            $figure = new Figure();
+            $figure->addMedia(new Media());
+        }
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){

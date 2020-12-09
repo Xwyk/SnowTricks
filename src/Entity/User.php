@@ -210,7 +210,7 @@ class User implements UserInterface
 
     public function getUsername()
     {
-        return $this->getPseudo();
+        return $this->getMailAddress();
     }
 
     public function eraseCredentials()

@@ -8,6 +8,10 @@
     <br>
     {{ figure.creationDate|date("d/m/Y à H:i") }}
     <br>
+    {% for media in figure.medias %}
+        <img src="{{ media.url }}">
+        <br>
+    {% endfor %}
     {% for comment in figure.comments %}
         <p>Posté par {{ comment.author.pseudo }} le {{ comment.creationDate|date("d/m/Y à H:i") }} : {{ comment.content }}</p>
         <br>
