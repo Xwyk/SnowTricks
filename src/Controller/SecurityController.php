@@ -42,7 +42,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/register", name="app_register")
+     * @Route("/registern", name="app_register")
      */
     public function register(Request $request, ObjectManager $manager, UserPasswordEncoderInterface $encoder)
     {

@@ -67,6 +67,11 @@ class Figure
      */
     private $medias;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="figures")
+     */
+    private $category;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -194,6 +199,18 @@ class Figure
                 $media->setFigure(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
