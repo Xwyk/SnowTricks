@@ -22,7 +22,6 @@ class Figure
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Assert\PositiveOrZero
      */
     private $id;
 
@@ -66,6 +65,11 @@ class Figure
      * @ORM\OneToMany(targetEntity=Media::class, mappedBy="figure", orphanRemoval=true)
      */
     private $medias;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="figures")
+     */
+    private $category;
 
     public function __construct()
     {
@@ -194,6 +198,18 @@ class Figure
                 $media->setFigure(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }
