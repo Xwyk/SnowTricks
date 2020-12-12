@@ -16,12 +16,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class FigureController extends AbstractController
 {
     /**
-     * @Route("/", name="home")
+     * @Route("/home", name="home")
      * @param FigureRepository $repository
      * @return Response
      */
     public function showAll(FigureRepository $repository): Response
     {
+
         $figures = $repository->findAll();
         return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
     }

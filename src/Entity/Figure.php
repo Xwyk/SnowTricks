@@ -22,7 +22,6 @@ class Figure
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Assert\PositiveOrZero
      */
     private $id;
 

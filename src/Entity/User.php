@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -17,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     message="L'adresse mail que vous avez indiquée est déjà utilisée"
  * )
  */
-class User implements UserInterface
+class User
 {
     /**
      * @ORM\Id
@@ -66,9 +65,19 @@ class User implements UserInterface
     private $comments;
 
     /**
+     * @ORM\OneToOne(targetEntity=RegisterRequest::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $registerRequest;
+
+    /**
      * @ORM\Column(type="boolean")
      */
-    private $isVerified = false;
+    private $isValid;
+
+    /**
+     * @ORM\Column(type="string", length=510, nullable=true)
+     */
+    private $profilePicture;
 
     public function __construct()
     {
@@ -206,30 +215,45 @@ class User implements UserInterface
         return array('ROLE_USER');
     }
 
-    public function getSalt()
+    public function getRegisterRequest(): ?RegisterRequest
     {
-        // TODO: Implement getSalt() method.
+        return $this->registerRequest;
     }
 
-    public function getUsername()
+    public function setRegisterRequest(RegisterRequest $registerRequest): self
     {
-        return $this->getMailAddress();
-    }
+        // set the owning side of the relation if necessary
+        if ($registerRequest->getUser() !== $this) {
+            $registerRequest->setUser($this);
+        }
 
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    public function isVerified(): bool
-    {
-        return $this->isVerified;
-    }
-
-    public function setIsVerified(bool $isVerified): self
-    {
-        $this->isVerified = $isVerified;
+        $this->registerRequest = $registerRequest;
 
         return $this;
     }
+
+    public function getIsValid(): ?bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(bool $isValid): self
+    {
+        $this->isValid = $isValid;
+
+        return $this;
+    }
+
+    public function getProfilePicture(): ?string
+    {
+        return $this->profilePicture;
+    }
+
+    public function setProfilePicture(?string $profilePicture): self
+    {
+        $this->profilePicture = $profilePicture;
+
+        return $this;
+    }
+
 }
