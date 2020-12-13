@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,7 +15,7 @@ class RegisterType extends AbstractType
     {
         $builder
             ->add('pseudo')
-            ->add('mailAddress')
+            ->add('mailAddress', EmailType::class)
             ->add('password', PasswordType::class)
             ->add('confirmPassword', PasswordType::class)
         ;

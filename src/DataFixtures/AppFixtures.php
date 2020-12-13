@@ -10,7 +10,6 @@ use App\Entity\User;
 use App\Repository\CategoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use PhpParser\Node\Expr\New_;
 
 class AppFixtures extends Fixture
 {
