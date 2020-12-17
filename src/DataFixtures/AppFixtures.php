@@ -6,7 +6,9 @@ use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Figure;
 use App\Entity\Media;
+use App\Entity\Picture;
 use App\Entity\User;
+use App\Entity\Video;
 use App\Repository\CategoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -41,26 +43,23 @@ class AppFixtures extends Fixture
             // Create figure in category
             for ($i = 0; $i < random_int(3, 5); $i++){
                 $figure = new Figure();
-                $figure->setAuthor($users[array_rand($users)])
-                       ->setName(join($faker->words, ' '))
+                $figure->setName(join($faker->words, ' '))
                        ->setDescription(join($faker->paragraphs, ' '))
                        ->setCreationDate($faker->dateTimeBetween("-30 days"))
                        ->setCategory($category);
                 // Adding medias to figure (pictures)
                 for ($a=0; $a < rand(3, 6); $a++){
-                    $media = new Media();
-                    $media->setUrl($faker->imageUrl())
-                          ->setFigure($figure)
-                          ->setType(1);
-                    $manager->persist($media);
+                    $picture = new Picture();
+                    $picture->setUrl($faker->imageUrl())
+                          ->setFigure($figure);
+                    $manager->persist($picture);
                 }
                 // Adding medias to figure (videos)
                 for ($a=0; $a < rand(3, 6); $a++){
-                    $media = new Media();
-                    $media->setUrl($faker->imageUrl())
-                        ->setFigure($figure)
-                        ->setType(2);
-                    $manager->persist($media);
+                    $video = new Video();
+                    $video->setUrl($faker->imageUrl())
+                          ->setFigure($figure);
+                    $manager->persist($video);
                 }
                 // Adding comments to figure
                 for ($j = 0; $j < rand(5,10); $j++){

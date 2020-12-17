@@ -50,31 +50,30 @@ class Figure
     private $modificationDate;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="figures")
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\Type("App\Entity\User")
-     */
-    private $author;
-
-    /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="figure", orphanRemoval=true)
      */
     private $comments;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Media::class, mappedBy="figure", orphanRemoval=true)
-     */
-    private $medias;
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="figures")
      */
     private $category;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="figure", orphanRemoval=true)
+     */
+    private $pictures;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Video::class, mappedBy="figure", orphanRemoval=true)
+     */
+    private $videos;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->medias = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
+        $this->videos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -130,18 +129,6 @@ class Figure
         return $this;
     }
 
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): self
-    {
-        $this->author = $author;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Comment[]
      */
@@ -172,36 +159,6 @@ class Figure
         return $this;
     }
 
-    /**
-     * @return Collection|Media[]
-     */
-    public function getMedias(): Collection
-    {
-        return $this->medias;
-    }
-
-    public function addMedia(Media $media): self
-    {
-        if (!$this->medias->contains($media)) {
-            $this->medias[] = $media;
-            $media->setFigure($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMedia(Media $media): self
-    {
-        if ($this->medias->removeElement($media)) {
-            // set the owning side to null (unless already changed)
-            if ($media->getFigure() === $this) {
-                $media->setFigure(null);
-            }
-        }
-
-        return $this;
-    }
-
     public function getCategory(): ?Category
     {
         return $this->category;
@@ -210,6 +167,66 @@ class Figure
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Picture[]
+     */
+    public function getPictures(): Collection
+    {
+        return $this->pictures;
+    }
+
+    public function addPicture(Picture $picture): self
+    {
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
+            $picture->setFigure($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): self
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getFigure() === $this) {
+                $picture->setFigure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Video[]
+     */
+    public function getVideos(): Collection
+    {
+        return $this->videos;
+    }
+
+    public function addVideo(Video $video): self
+    {
+        if (!$this->videos->contains($video)) {
+            $this->videos[] = $video;
+            $video->setFigure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVideo(Video $video): self
+    {
+        if ($this->videos->removeElement($video)) {
+            // set the owning side to null (unless already changed)
+            if ($video->getFigure() === $this) {
+                $video->setFigure(null);
+            }
+        }
 
         return $this;
     }

@@ -7,10 +7,10 @@
         <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
             <a href="{{ path('figure_show', {'id': figure.id}) }}">
                 <div class="card">
-                    <img class="card-img-top" src="{{ figure.medias[0].url }}" alt="Card image cap">
+                    <img class="card-img-top" src="{{ figure.pictures[0].url }}" alt="Card image cap">
                     <div class="card-title d-flex">
                         <div class="mr-auto p-2">{{ figure.name }}</div>
-                            <div class="p-2"><a href="{{ path('figure_edit', {'id':figure.id}) }}"><i class="fas fa-edit"></i></a></div>
+                            <div class="p-2"><i class="fas fa-edit"></i></div>
                             <div class="p-2"><i class="fas fa-edit"></i></div>
                     </div>
                 </div>
@@ -19,4 +19,3 @@
     {% endfor %}
     </div>
 {% endblock %}
-
