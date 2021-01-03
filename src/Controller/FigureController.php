@@ -46,10 +46,12 @@ class FigureController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
             $figure->setCreationDate(new \DateTime());
-
+            dump($form->get('pictures')[0]->get('image')->getData());
             $manager->persist($figure);
             $manager->flush();
-            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+            die();
+
+            //return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
         }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
