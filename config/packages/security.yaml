@@ -6,6 +6,9 @@ security:
                 class : 'App\Entity\User'
                 property : 'pseudo'
         users_in_memory: { memory: null }
+    encoders :
+        App\Entity\User:
+            algorythm: bcrypt
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -13,7 +16,7 @@ security:
         main:
             anonymous: true
             lazy: true
-            provider: users_in_memory
+            provider: users
             guard:
                 authenticators:
                     - App\Security\UserAuthenticator
