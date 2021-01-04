@@ -8,7 +8,7 @@ security:
         users_in_memory: { memory: null }
     encoders :
         App\Entity\User:
-            algorythm: bcrypt
+            algorithm: bcrypt
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
