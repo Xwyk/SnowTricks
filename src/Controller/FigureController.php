@@ -49,7 +49,6 @@ class FigureController extends AbstractController
             dump($form->get('pictures')[0]->get('image')->getData());
             $manager->persist($figure);
             $manager->flush();
-            die();
 
             //return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
         }
