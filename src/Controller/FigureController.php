@@ -37,10 +37,9 @@ class FigureController extends AbstractController
      */
     public function figure(Request $request, ObjectManager $manager, FigureRepository $repository, $id = null): Response
     {
+        $figure = new Figure();
         if ($id !== null){
             $figure = $repository->find($id);
-        } else {
-            $figure = new Figure();
         }
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
