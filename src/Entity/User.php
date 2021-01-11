@@ -42,24 +42,13 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\Length(min="8", minMessage="Votre mot de passe doit faire mnimum 8 caractères")
-     * @Assert\EqualTo(propertyPath="confirmPassword", message="Les mots de passe ne sont pas identiques")
      */
     private $password;
-
-    /**
-     * @Assert\EqualTo(propertyPath="password", message="Les mots de passe ne sont pas identiques")
-     */
-    private $confirmPassword;
 
     /**
      * @ORM\Column(type="datetime")
      */
     private $creationDate;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Figure::class, mappedBy="author")
-     */
-    private $figures;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
@@ -70,11 +59,6 @@ class User implements UserInterface
      * @ORM\OneToOne(targetEntity=RegisterRequest::class, mappedBy="user", cascade={"persist", "remove"})
      */
     private $registerRequest;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isValid;
 
     /**
      * @ORM\Column(type="string", length=510, nullable=true)
@@ -126,19 +110,7 @@ class User implements UserInterface
         return $this->password;
     }
 
-    public function getConfirmPassword(): ?string
-    {
-        return $this->password;
-    }
-
     public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function setConfirmPassword(string $password): self
     {
         $this->password = $password;
 
@@ -205,18 +177,6 @@ class User implements UserInterface
         }
 
         $this->registerRequest = $registerRequest;
-
-        return $this;
-    }
-
-    public function getIsValid(): ?bool
-    {
-        return $this->isValid;
-    }
-
-    public function setIsValid(bool $isValid): self
-    {
-        $this->isValid = $isValid;
 
         return $this;
     }
