@@ -12,6 +12,7 @@ use App\Entity\Video;
 use App\Repository\CategoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
@@ -25,9 +26,8 @@ class AppFixtures extends Fixture
             $users[$i] = new User();
             $users[$i]->setPseudo($faker->firstNameMale)
                       ->setMailAddress($faker->freeEmail)
-                      ->setPassword($faker->password )
-                      ->setCreationDate($faker->dateTimeBetween("-30 days"))
-                      ->setIsValid(true);
+                      ->setPassword(password_hash($faker->password, PASSWORD_BCRYPT ))
+                      ->setCreationDate($faker->dateTimeBetween("-30 days"));
             $manager->persist($users[$i]);
         }
 
