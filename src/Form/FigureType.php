@@ -15,17 +15,17 @@ class FigureType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
-            ->add('pictures', CollectionType::class, [
-                'entry_type' => PictureType::class,
-                'entry_options' => ['label' => false],
-                'allow_add'=>true
-            ])
             ->add('videos', CollectionType::class, [
                 'entry_type' => VideoType::class,
                 'entry_options' => ['label' => false],
                 'allow_add'=>true
             ])
         ;
+        /*->add('pictures', CollectionType::class, [
+                'entry_type' => PictureType::class,
+                'entry_options' => ['label' => false],
+                'allow_add'=>true
+            ])*/
     }
 
     public function configureOptions(OptionsResolver $resolver)
