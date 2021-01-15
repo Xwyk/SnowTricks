@@ -5,11 +5,9 @@ namespace App\DataFixtures;
 use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Figure;
-use App\Entity\Media;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Video;
-use App\Repository\CategoryRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -25,9 +23,8 @@ class AppFixtures extends Fixture
             $users[$i] = new User();
             $users[$i]->setPseudo($faker->firstNameMale)
                       ->setMailAddress($faker->freeEmail)
-                      ->setPassword($faker->password )
-                      ->setCreationDate($faker->dateTimeBetween("-30 days"))
-                      ->setIsValid(true);
+                      ->setPassword(password_hash($faker->password, PASSWORD_BCRYPT ))
+                      ->setCreationDate($faker->dateTimeBetween("-30 days"));
             $manager->persist($users[$i]);
         }
 

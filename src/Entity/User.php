@@ -46,19 +46,9 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @Assert\EqualTo(propertyPath="password", message="Les mots de passe ne sont pas identiques")
-     */
-    private $confirmPassword;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $creationDate;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Figure::class, mappedBy="author")
-     */
-    private $figures;
 
     /**
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="author", orphanRemoval=true)
@@ -71,14 +61,14 @@ class User implements UserInterface
     private $registerRequest;
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $isValid;
-
-    /**
      * @ORM\Column(type="string", length=510, nullable=true)
      */
     private $profilePicture;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isVerified = false;
 
     public function __construct()
     {
@@ -120,19 +110,7 @@ class User implements UserInterface
         return $this->password;
     }
 
-    public function getConfirmPassword(): ?string
-    {
-        return $this->password;
-    }
-
     public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function setConfirmPassword(string $password): self
     {
         $this->password = $password;
 
@@ -203,18 +181,6 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getIsValid(): ?bool
-    {
-        return $this->isValid;
-    }
-
-    public function setIsValid(bool $isValid): self
-    {
-        $this->isValid = $isValid;
-
-        return $this;
-    }
-
     public function getProfilePicture(): ?string
     {
         return $this->profilePicture;
@@ -240,5 +206,17 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    public function isVerified(): bool
+    {
+        return $this->isVerified;
+    }
+
+    public function setIsVerified(bool $isVerified): self
+    {
+        $this->isVerified = $isVerified;
+
+        return $this;
     }
 }
