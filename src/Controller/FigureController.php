@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Figure;
 use App\Entity\Media;
 use App\Entity\User;
+use App\Entity\Video;
 use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\Persistence\ObjectManager;
@@ -45,8 +46,14 @@ class FigureController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
             $figure->setCreationDate(new \DateTime());
-            dump($form->get('pictures')[0]->get('image')->getData());
             $manager->persist($figure);
+
+            foreach ($form->get('videos') as $videoForm){
+                $video = new Video();
+                $video->setFigure($figure)
+                    ->setUrl($videoForm->get('url')->getData());
+                $manager->persist($video);
+            }
             $manager->flush();
 
             //return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);

@@ -16,16 +16,17 @@
             'placeholder' : 'Description du nouvel article'
         }
     }) }}
-    <ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
+    {# <ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
         {% for picture in form.pictures %}
         {% endfor %}
     </ul>
-    <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button>
+    <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button> #}
 
     <ul class="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
     {% for video in form.videos %}
     {% endfor %}
     </ul>
+    <button type="button" class="add_item_link" data-collection-holder-class="videos">Ajouter une video</button> #}
 
     <button class="btn btn-success" type="submit">Ajouter l'article</button>
 
