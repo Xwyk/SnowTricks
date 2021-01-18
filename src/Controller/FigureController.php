@@ -48,10 +48,10 @@ class FigureController extends AbstractController
             $figure->setCreationDate(new \DateTime());
             $manager->persist($figure);
 
-            foreach ($form->get('videos') as $videoForm){
+            foreach ($form->get('videos') as $videoType){
                 $video = new Video();
                 $video->setFigure($figure)
-                    ->setUrl($videoForm->get('url')->getData());
+                    ->setUrl($videoType->get('url')->getData());
                 $manager->persist($video);
             }
             $manager->flush();
