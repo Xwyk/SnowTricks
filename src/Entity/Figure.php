@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -71,6 +72,7 @@ class Figure
 
     public function __construct()
     {
+        $this->creationDate = new \DateTime();
         $this->comments = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
@@ -229,5 +231,10 @@ class Figure
         }
 
         return $this;
+    }
+
+    public function getSlug(){
+        $slugger = new AsciiSlugger();
+        return $slugger->slug($this->getName());
     }
 }

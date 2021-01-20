@@ -29,48 +29,54 @@ class FigureController extends AbstractController
 
     /**
      * @Route("/figure/add", name="figure_add")
-     * @Route("/figure/{id}/edit", name="figure_edit")
      * @param Request $request
      * @param ObjectManager $manager
      * @param FigureRepository $repository
      * @param null $id
      * @return Response
      */
-    public function figure(Request $request, ObjectManager $manager, FigureRepository $repository, $id = null): Response
+    public function add(Request $request, ObjectManager $manager, FigureRepository $repository): Response
     {
-        $figure = new Figure();
-        if ($id !== null){
-            $figure = $repository->find($id);
-        }
-        $form = $this->createForm(FigureType::class, $figure);
+        $form = $this->createForm(FigureType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
-            $figure->setCreationDate(new \DateTime());
-            $manager->persist($figure);
-
-            foreach ($form->get('videos') as $videoType){
-                $video = new Video();
-                $video->setFigure($figure)
-                    ->setUrl($videoType->get('url')->getData());
-                $manager->persist($video);
-            }
+            $figure = $form->getData();
+            $manager->persist($form->getData());
             $manager->flush();
 
-            //return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
         }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
-     * @Route("/figure/{id}", name="figure_show")
-     * @param FigureRepository $repository
-     * @param $id
+     * @Route("/figure/{id}/edit", name="figure_edit")
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @param Figure $figure
      * @return Response
      */
-    public function showOne(FigureRepository $repository, $id): Response
+    public function edit(Request $request, ObjectManager $manager, Figure $figure): Response
     {
 
-        $figure = $repository->find($id);
+        $form = $this->createForm(FigureType::class, $figure);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+
+            $manager->persist($figure);
+            $manager->flush();
+            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+        }
+        return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
+    }
+
+    /**
+     * @Route("/figure/{id}-{slug}", name="figure_show")
+     * @param Figure $figure
+     * @return Response
+     */
+    public function showOne(Figure $figure): Response
+    {
         return $this->render("snowtricks/figure.html.twig", ["figure" => $figure]);
     }
 

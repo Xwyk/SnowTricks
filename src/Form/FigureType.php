@@ -16,12 +16,14 @@ class FigureType extends AbstractType
             ->add('name')
             ->add('description')
             ->add('videos', CollectionType::class, [
+                'by_reference' => false,
                 'entry_type' => VideoType::class,
                 'entry_options' => ['label' => false],
                 'allow_add'=>true
             ])
         ;
         /*->add('pictures', CollectionType::class, [
+                'by_reference' => false,
                 'entry_type' => PictureType::class,
                 'entry_options' => ['label' => false],
                 'allow_add'=>true
