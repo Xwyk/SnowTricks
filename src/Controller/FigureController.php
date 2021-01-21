@@ -31,11 +31,9 @@ class FigureController extends AbstractController
      * @Route("/figure/add", name="figure_add")
      * @param Request $request
      * @param ObjectManager $manager
-     * @param FigureRepository $repository
-     * @param null $id
      * @return Response
      */
-    public function add(Request $request, ObjectManager $manager, FigureRepository $repository): Response
+    public function add(Request $request, ObjectManager $manager): Response
     {
         $form = $this->createForm(FigureType::class);
         $form->handleRequest($request);
@@ -62,7 +60,6 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
-
             $manager->persist($figure);
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
