@@ -48,7 +48,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}/edit", name="figure_edit")
+     * @Route("/figure/{id}-{slug}/edit", name="figure_edit")
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
