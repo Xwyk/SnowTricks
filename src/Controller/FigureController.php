@@ -76,8 +76,4 @@ class FigureController extends AbstractController
     {
         return $this->render("snowtricks/figure.html.twig", ["figure" => $figure]);
     }
-
-
-
-
 }
