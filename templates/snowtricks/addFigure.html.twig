@@ -16,11 +16,11 @@
             'placeholder' : 'Description du nouvel article'
         }
     }) }}
-    {# <ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
+    {<ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
         {% for picture in form.pictures %}
         {% endfor %}
     </ul>
-    <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button> #}
+    <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button>
 
     <ul class="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
     {% for video in form.videos %}
@@ -38,6 +38,17 @@
         jQuery(document).ready(function() {
             // Get the ul that holds the collection of tags
             var $mediasCollectionHolder = $('ul.pictures');
+            // count the current form inputs we have (e.g. 2), use that as the new
+            // index when inserting a new item (e.g. 2)
+            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('input').length);
+            $('body').on('click', '.add_item_link', function(e) {
+                var $collectionHolderClass = $(e.currentTarget).data('collectionHolderClass');
+                // add a new tag form (see next code block)
+                addFormToCollection($collectionHolderClass);
+            })
+
+            // Get the ul that holds the collection of tags
+            var $mediasCollectionHolder = $('ul.videos');
             // count the current form inputs we have (e.g. 2), use that as the new
             // index when inserting a new item (e.g. 2)
             $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('input').length);

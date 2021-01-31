@@ -37,6 +37,7 @@ class PictureType extends AbstractType
                     ])
                 ],
             ])
+            ->add('url')
         ;
     }
 

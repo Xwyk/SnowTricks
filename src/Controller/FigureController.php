@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Figure;
 use App\Entity\Media;
+use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Video;
 use App\Form\FigureType;
@@ -39,10 +40,10 @@ class FigureController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
             $figure = $form->getData();
-            $manager->persist($form->getData());
+            $manager->persist($figure);
             $manager->flush();
 
-            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
         }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
@@ -60,9 +61,18 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
+            foreach ($form->get('pictures') as $pictureForm){
+                $image = $pictureForm->get('image')->getData();
+                if($image){
+                    $picture = new Picture();
+                    $picture->setFigure($figure)
+                            ->setUrl($image->getPathname());
+                }
+                $figure->addPicture($picture);
+            }
             $manager->persist($figure);
             $manager->flush();
-            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId()]);
+            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
         }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
