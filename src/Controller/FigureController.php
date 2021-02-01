@@ -67,8 +67,8 @@ class FigureController extends AbstractController
                     $picture = new Picture();
                     $picture->setFigure($figure)
                             ->setUrl($image->getPathname());
+                    $figure->addPicture($picture);
                 }
-                $figure->addPicture($picture);
             }
             $manager->persist($figure);
             $manager->flush();
