@@ -64,10 +64,8 @@ class FigureController extends AbstractController
             foreach ($form->get('pictures') as $pictureForm){
                 $image = $pictureForm->get('image')->getData();
                 if($image){
-                    $picture = new Picture();
-                    $picture->setFigure($figure)
-                            ->setUrl($image->getPathname());
-                    $figure->addPicture($picture);
+                    $picture = $pictureForm->getData();
+                    $picture->setUrl($image->getPathname());
                 }
             }
             $manager->persist($figure);
