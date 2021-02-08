@@ -49,7 +49,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/edit", name="figure_edit")
+     * @Route("/figure/{id}/edit", name="figure_edit")
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
@@ -57,17 +57,10 @@ class FigureController extends AbstractController
      */
     public function edit(Request $request, ObjectManager $manager, Figure $figure): Response
     {
-
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
-            foreach ($form->get('pictures') as $pictureForm){
-                $image = $pictureForm->get('image')->getData();
-                if($image){
-                    $picture = $pictureForm->getData();
-                    $picture->setUrl($image->getPathname());
-                }
-            }
+
             $manager->persist($figure);
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
@@ -76,7 +69,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}", name="figure_show")
+     * @Route("/figure/{id}", name="figure_show")
      * @param Figure $figure
      * @return Response
      */

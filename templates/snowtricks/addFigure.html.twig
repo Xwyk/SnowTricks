@@ -18,13 +18,36 @@
     }) }}
     <ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
         {% for picture in form.pictures %}
-            {{  form_row(picture.image) }}
+            {# {{  form_row(picture.image) }}
             {% do picture.url.setRendered() %}
-            <img src="{{ picture.url.vars.value }}">
+            <img src="{{ picture.url.vars.value }}"> #}
         {% endfor %}
     </ul>
     {# <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button>  #}
 
+
+    <p>Ajouter des vidéos pour illustrer votre trick !</p>
+    {% set x = -1 %}
+    <ul class="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+    {% for video in form.videos %}
+        {% set x = x+1 %}
+        <div class="form-group" id="video_{{ x }}">
+            <div class="row">
+                <div class="col-10">
+                    {{ form_row(video.url) }}
+                </div>
+                <div class="col-2">
+                    <button type="button" onclick="$('#video_{{ x }}').remove();" class="btn btn-danger">X</button>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </ul>
+    <input type="hidden" id="widgets-counter-video" value="0">
+
+    <div class="form-group">
+        <button type="button" id="add-video" data-collection-holder-class="videos" class="btn btn-info add_item_link">Ajouter une vidéo</button>
+    </div>
     {# <ul class="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
     {% for video in form.videos %}
         {{  form_row(video) }}
@@ -39,20 +62,13 @@
 
 {% block scripts %}
     <script>
+        /*$(document).on('change', '.custom-file-input', function () {
+            let fileName = $(this).val().replace(/\\/g, '/').replace(/.*\//, '');
+            $(this).parent('.custom-file').find('.custom-file-label').text(fileName);
+        })*/
         jQuery(document).ready(function() {
             // Get the ul that holds the collection of tags
-            var $mediasCollectionHolder = $('ul.pictures');
-            // count the current form inputs we have (e.g. 2), use that as the new
-            // index when inserting a new item (e.g. 2)
-            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('input').length);
-            $('body').on('click', '.add_item_link', function(e) {
-                var $collectionHolderClass = $(e.currentTarget).data('collectionHolderClass');
-                // add a new tag form (see next code block)
-                addFormToCollection($collectionHolderClass);
-            })
-
-            // Get the ul that holds the collection of tags
-            var $mediasCollectionHolder = $('ul.videos');
+            var $mediasCollectionHolder = $('.videos');
             // count the current form inputs we have (e.g. 2), use that as the new
             // index when inserting a new item (e.g. 2)
             $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('input').length);
@@ -67,6 +83,7 @@
             var $collectionHolder = $('.' + $collectionHolderClass);
             // Get the data-prototype explained earlier
             var prototype = $collectionHolder.data('prototype');
+            console.log($collectionHolder);
             // get the new index
             var index = $collectionHolder.data('index');
             var newForm = prototype;

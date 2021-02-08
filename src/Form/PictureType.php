@@ -14,8 +14,7 @@ class PictureType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('url')
-            ->add('image', FileType::class, [
+            /*->add('image', PictureType::class, [
                 'label' => 'Image : ',
 
                 // unmapped means that this field is not associated to any entity property
@@ -24,20 +23,7 @@ class PictureType extends AbstractType
                 // make it optional so you don't have to re-upload the PDF file
                 // every time you edit the Product details
                 'required' => false,
-
-                // unmapped fields can't define their validation using annotations
-                // in the associated entity, so you can use the PHP constraint classes
-                'constraints' => [
-                    new File([
-                        'maxSize' => '4096k',
-                        'mimeTypes' => [
-                            'image/png',
-                            'image/jpeg',
-                        ],
-                        'mimeTypesMessage' => 'Merci de sélectionner une image valide (jpg, jpeg ou png)',
-                    ])
-                ],
-            ])
+            ])*/
             ->add('url')
         ;
     }
