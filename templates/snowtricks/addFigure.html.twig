@@ -1,5 +1,5 @@
 {% extends "base.html.twig" %}
-{% form_theme form 'bootstrap_4_layout.html.twig' %}
+{% form_theme form "figure/video.html.twig" %}
 {% block body %}
     {{ form_start(form) }}
 
@@ -16,38 +16,11 @@
             'placeholder' : 'Description du nouvel article'
         }
     }) }}
-    <ul class="pictures" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
-        {% for picture in form.pictures %}
-            {# {{  form_row(picture.image) }}
-            {% do picture.url.setRendered() %}
-            <img src="{{ picture.url.vars.value }}"> #}
-        {% endfor %}
-    </ul>
-    {# <button type="button" class="add_item_link" data-collection-holder-class="pictures">Ajouter une image</button>  #}
-
 
     <p>Ajouter des vidéos pour illustrer votre trick !</p>
-    {% set x = -1 %}
-    <div class="videos" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
-    {% for video in form.videos %}
-        {% set x = x+1 %}
-        <div class="form-group" id="video_{{ x }}">
-            <div class="row">
-                <div class="col-10">
-                    {{ form_row(video.url) }}
-                </div>
-                <div class="col-2">
-                    <button type="button" onclick="$('#video_{{ x }}').remove();" class="btn btn-danger">X</button>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    <input type="hidden" id="widgets-counter-video" value="0">
+    {{ form_row(form.videos) }}
+    {{ form_row(form.pictures) }}
 
-    <div class="form-group">
-        <button type="button" id="add-video" data-collection-holder-class="videos" class="btn btn-info add_item_link">Ajouter une vidéo</button>
-    </div>
 
     <button class="btn btn-success" type="submit">Ajouter l'article</button>
 
@@ -56,38 +29,49 @@
 
 {% block scripts %}
     <script>
-        jQuery(document).ready(function() {
+        jQuery(document).ready(function () {
             // Get the ul that holds the collection of tags
-            var $mediasCollectionHolder = $('.videos');
-            // count the current form inputs we have (e.g. 2), use that as the new
-            // index when inserting a new item (e.g. 2)
-            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('input').length);
-            $('body').on('click', '.add_item_link', function(e) {
-                var $collectionHolderClass = $(e.currentTarget).data('collectionHolderClass');
-                // add a new tag form (see next code block)
-                addFormToCollection($collectionHolderClass);
-            })
+            var $mediasCollectionHolder = $('#figure_videos');
+            addAddButton($mediasCollectionHolder, "Ajouter une video");
+            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('fieldset').length);
+
+
+            var $mediasCollectionHolder = $('#figure_pictures');
+            addAddButton($mediasCollectionHolder, "Ajouter une image");
+            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('fieldset').length);
         });
-        function addFormToCollection($collectionHolderClass) {
-            var $collectionHolder = $('.' + $collectionHolderClass);
+
+        function addAddButton($elt, value) {
+            const button = document.createElement('button');
+            button.className = "btn btn-primary";
+            button.innerText = value;
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                addFormToCollection($elt);
+            });
+            $elt.after(button);
+        }
+
+
+        function addRemoveButton($elt, $collectionHolder){
+            const button = document.createElement('button');
+            button.className = "btn btn-danger";
+            button.innerText = "Delete";
+            button.addEventListener('click', (e) => {
+                $elt.remove();
+                let index = $collectionHolder.data('index');
+                $collectionHolder.data('index', index --);
+            });
+            $elt.append(button);
+        }
+
+        function addFormToCollection($collectionHolder) {
             var prototype = $collectionHolder.data('prototype');
             var index = $collectionHolder.data('index');
-            var newForm = prototype;
-            newForm = newForm.replace(/2/g, index);
-            console.log(parseInt(2));
+            var $newForm = $(prototype);
             $collectionHolder.data('index', index++);
-            var $newFormLi = $(`
-            <div class="form-group" id="video_`+index+`">
-                <div class="row">
-                    <div class="col-10">
-                        `+newForm+`
-                    </div>
-                    <div class="col-2">
-                        <button type="button" onclick="$('#video_`+index+`').remove();" class="btn btn-danger">X</button>
-                    </div>
-                </div>
-            </div>`);
-            $collectionHolder.append($newFormLi)
+            $collectionHolder.append($newForm);
+            addRemoveButton($newForm,$collectionHolder);
         }
     </script>
 {% endblock %}
