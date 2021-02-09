@@ -76,8 +76,7 @@
                 let index = $collectionHolder.data('index');
                 $collectionHolder.data('index', index --);
             });
-            const $rem = $elt;
-            $rem.append(button);
+            $($elt).find('.removeBtn').append(button);
         }
 
         function addFormToCollection($collectionHolder) {

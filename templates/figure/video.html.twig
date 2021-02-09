@@ -1,20 +1,24 @@
 {% block _figure_videos_entry_row %}
-    <fieldset class="form-group">
+    <fieldset class="form-group col-4">
         <div class="row">
-            <div class="col-10">
+            {# <div class="col-3">
                 {{ form_label(form.url) }}
-            </div>
-            <div class="col-2 removeBtn">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-2">
-                <div class="videoOnEdit">
-                    {{ form.url.vars.data|raw }}
-                </div>
+            </div>#}
+            <div class="col-8">
                 {{ form_errors(form.url) }}
                 {{ form_widget(form.url) }}
             </div>
+            <div class="col-4 removeBtn">
+                {# This class allow dynamic add of remove button #}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 videoOnEdit">
+                {{ (form.url.vars.data|default('<div>Enregistrez un adresse pour voir la video</p>'))|raw }}
+            </div>
         </div>
     </fieldset>
+{% endblock %}
+{% block _figure_videos_row %}
+        {{ form_row(form, {'attr': {'class': 'row'}}) }}
 {% endblock %}
