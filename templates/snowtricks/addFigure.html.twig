@@ -31,14 +31,28 @@
     <script>
         jQuery(document).ready(function () {
             // Get the ul that holds the collection of tags
-            var $mediasCollectionHolder = $('#figure_videos');
-            addAddButton($mediasCollectionHolder, "Ajouter une video");
-            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('fieldset').length);
+            const $videosCollectionHolder = $('#figure_videos');
+            addAddButton($videosCollectionHolder, "Ajouter une video");
+            $videosCollectionHolder.data('index', $videosCollectionHolder.find('fieldset').length);
+
+            for (const $elt of $videosCollectionHolder.find('fieldset')){
+                addRemoveButton($elt, $videosCollectionHolder);
+            }
+
+            const $picturesCollectionHolder = $('#figure_pictures');
+            addAddButton($picturesCollectionHolder, "Ajouter une image");
+            $picturesCollectionHolder.data('index', $picturesCollectionHolder.find('fieldset').length);
+
+            for(const $elt of $('.videoOnEdit>iframe')){
+                $elt.width="280px";
+                $elt.height=315/2+"px";
+            }
+            for(const $elt of $('.removeBtn')){
+                $elt.width="280px";
+                $elt.height=315/2+"px";
+            }
 
 
-            var $mediasCollectionHolder = $('#figure_pictures');
-            addAddButton($mediasCollectionHolder, "Ajouter une image");
-            $mediasCollectionHolder.data('index', $mediasCollectionHolder.find('fieldset').length);
         });
 
         function addAddButton($elt, value) {
@@ -62,13 +76,14 @@
                 let index = $collectionHolder.data('index');
                 $collectionHolder.data('index', index --);
             });
-            $elt.append(button);
+            const $rem = $elt;
+            $rem.append(button);
         }
 
         function addFormToCollection($collectionHolder) {
-            var prototype = $collectionHolder.data('prototype');
-            var index = $collectionHolder.data('index');
-            var $newForm = $(prototype);
+            const prototype = $collectionHolder.data('prototype');
+            let index = $collectionHolder.data('index');
+            const $newForm = $(prototype);
             $collectionHolder.data('index', index++);
             $collectionHolder.append($newForm);
             addRemoveButton($newForm,$collectionHolder);
