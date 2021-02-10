@@ -3,41 +3,15 @@
 <head>
     <title>{{ title|default("SnowTricks") }}</title>
     <link rel="stylesheet" href="https://bootswatch.com/4/materia/bootstrap.min.css">
+    {% block externalCSS %}{% endblock %}
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="{{path('home')}}">Snowtricks</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2" id="navbarColor01">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{path('home')}}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{path('home')}}#tricks">Tricks</a>
-                </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Add Trick</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sign out</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sign in</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Sign up</a>
-                    </li>
-            </ul>
-        </div>
-    </nav>
+    {% include 'shared/header.html.twig' %}
     <div class="container">
         {% block body %}{% endblock %}
     </div>
+    {% include 'shared/footer.html.twig' %}
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://kit.fontawesome.com/27f0b9b938.js" crossorigin="anonymous"></script>
