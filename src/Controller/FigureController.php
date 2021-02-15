@@ -84,6 +84,18 @@ class FigureController extends AbstractController
     }
 
     /**
+     * @Route("/figure/{id}-{slug}/delete", name="figure_delete")
+     * @param ObjectManager $manager
+     * @param Figure $figure
+     * @return Response
+     */
+    public function delete(ObjectManager $manager, Figure $figure): Response
+    {
+        $manager->remove($figure);
+        $manager->flush();
+    }
+
+    /**
      * @Route("/figure/{id}-{slug}", name="figure_show")
      * @param Figure $figure
      * @return Response

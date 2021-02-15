@@ -43,7 +43,7 @@
     <script>
         function loadMoreFigures(){
             $.get( $("#figuresList > div").length, function( data ) {
-                $('#figuresList').html($('#figuresList').html()+data);
+                $('#figuresList').append(data);
             });
         }
     </script>
