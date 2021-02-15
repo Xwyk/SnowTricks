@@ -51,7 +51,7 @@ class Figure
     private $modificationDate;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="figure", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="figure", orphanRemoval=true ,cascade={"persist"})
      */
     private $comments;
 

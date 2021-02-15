@@ -1,0 +1,48 @@
+{% extends "base.html.twig" %}
+{% form_theme form "figure/video.html.twig" %}
+{% block body %}
+    {{ form_start(form) }}
+    <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+        <div id="figureTitle" class="text-center">
+            <h1>{{ form_row(form.name, {
+                    'label' : "Nom du trick",
+                    'attr' : {
+                        'placeholder' : 'Nom du trick (doit être unique)'
+                    }
+                })  }}</h1>
+        </div>
+    </div>
+
+        {{ form_row(form.videos) }}
+    {{ form_row(form.pictures) }}
+
+    <div class="row text-center" id="seeMedias">
+        <button class="btn btn-info col-10 mt-3">Voir les médias</button>
+    </div>
+
+    <div class="row">
+        <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
+            {{ form_row(form.description, {
+                'label' : "Description du trick",
+                'attr' : {
+                    'placeholder' : 'Description du trick'
+                }
+            }) }}
+        </div>
+    </div>
+
+        <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
+            {# <p class="col">Catégorie : {{ figure.category.name }}</p>#}
+        </div>
+    <button class="btn btn-success" type="submit">Ajouter l'article</button>
+
+    {{ form_end(form) }}
+{% endblock %}
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/figureEdition.js') }}"></script>
+{% endblock %}
+{% block externalCSS %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/video.css") }}">
+{% endblock %}

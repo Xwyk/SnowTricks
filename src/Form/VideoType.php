@@ -14,7 +14,7 @@ class VideoType extends AbstractType
     {
         $builder
             ->add('url',TextareaType::class,[
-                'label' => "Balise"
+                'label' => "Url de la vidéo"
             ])
         ;
     }

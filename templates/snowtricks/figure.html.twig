@@ -1,6 +1,6 @@
 {% extends "base.html.twig" %}
 {% block body %}
-    <div id="figureMainImage" class="position-relative border border-dark">
+    <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
         <div id="figureTitle" class="text-center">
             <h1>{{ figure.name }}</h1>
@@ -8,12 +8,12 @@
         {% if app.user %}
             <div class="operations">
                 <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
-                {# <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer le trick : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
-            #}</div>
+                <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+            </div>
         {% endif %}
     </div>
 
-    <div class="row" id="figureMedias">
+    <div class="row fadeOnModal" id="figureMedias">
         {% for picture in figure.pictures %}
             <div class="figurePicture mx-auto col-sm-6 col-md-4 col-lg-4 col-xl-3 border border-dark">
                 <img src="{{ asset(picture.url) }}" width="100%">
@@ -49,7 +49,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row fadeOnModal">
         <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
             <p class="col">Publié le {{ figure.creationDate | date('d/m/Y') }} à {{ figure.creationDate | date('H:i') }}</p>
             <p class="col">Catégorie : {{ figure.category.name }}</p>
@@ -58,7 +58,7 @@
 
     <hr>
 
-    <section id="comments">
+    <section id="comments" class="fadeOnModal">
         {% for comment in figure.comments | slice(0,5) %}
             <div class="comment row mx-auto">
                 <div class="col-md-10 col-12 mx-auto row">
@@ -70,11 +70,11 @@
             </div>
         {% endfor %}
     </section>
-    <div class="row text-center">
+    <div class="row text-center fadeOnModal">
         <button id="loadMoreComments" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     <!-- The Modal/Lightbox -->
-    <div id="imageModal" class="modal">
+    <div id="imageModal" class="modal rounded mx-auto">
         <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
         <img src="#" alt="">
     </div>
@@ -84,11 +84,13 @@
     <script>
         $("#figureMedias").hide();
         $(".figurePicture img").click(function() {
+            $(".fadeOnModal").fadeTo("slow" , 0.5);
             $(".modal img").attr("src", this.src);
             $("#imageModal").show();
         });
 
         $(".close.cursor").click(function() {
+            $(".fadeOnModal").fadeTo("slow" , 1);
             $("#imageModal").hide();
         });
 

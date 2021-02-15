@@ -17,22 +17,20 @@
     </fieldset>
 {% endblock %}
 {% block _figure_videos_row %}
-        {{ form_row(form, {'attr': {'class': 'row'}}) }}
+        {{ form_row(form, {'attr': {'class': 'row justify-content-md-center'}}) }}
 {% endblock %}
 
 {# Card template for video entry #}
 {% block _figure_videos_entry_row %}
-    <fieldset class="card">
-        <div class="card-img-top videoOnEdit" alt="Card image cap">
-            {{ (form.url.vars.data|default('<div>Enregistrez un adresse pour voir la video</p>'))|raw }}
+    <fieldset class="card col-sm-6 col-md-4 col-lg-4 col-xl-3 p-2">
+        <div class="card-img-top videoOnEdit figureVideo">
+            <iframe width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ form.url.vars.data }}"allowfullscreen></iframe>
         </div>
-        <div class="card-body">
             <h5 class="card-title">{{ form_label(form.url) }}</h5>
             <p class="card-text">
                 {{ form_errors(form.url) }}
                 {{ form_widget(form.url) }}</p>
             <div class="removeBtn"></div>
-        </div>
     </fieldset>
 {% endblock %}
 {% block externalCSS %}

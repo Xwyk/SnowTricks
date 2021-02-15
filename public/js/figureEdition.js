@@ -23,8 +23,15 @@ jQuery(document).ready(function () {
 
     // Modifying dimensions of stored iframe video
     for(const $elt of $('.videoOnEdit>iframe')){
-        $elt.width="100%";
-        $elt.height="100%";
+        const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+        const url = $($elt).attr('src');
+        const match = url.match(regExp);
+        if (match && match[2].length == 11)
+        {
+            const id = match[2];
+            const embedlink = "http://www.youtube.com/embed/" + id;
+            $($elt).attr('src', embedlink);
+        }
     }
 });
 

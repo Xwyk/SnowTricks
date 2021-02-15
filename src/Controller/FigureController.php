@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Figure;
 use App\Entity\Media;
 use App\Entity\Picture;
@@ -72,7 +73,7 @@ class FigureController extends AbstractController
      */
     public function edit(Request $request, ObjectManager $manager, Figure $figure): Response
     {
-        $form = $this->createForm(FigureType::class, $figure);
+        $form = $this->createForm(new FigureType($this->getDoctrine()->getManager(Category::class)), $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
 
@@ -80,7 +81,7 @@ class FigureController extends AbstractController
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
         }
-        return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("snowtricks/editFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
