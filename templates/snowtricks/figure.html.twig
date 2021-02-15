@@ -1,5 +1,9 @@
 {% extends "base.html.twig" %}
+{% block externalCSS %}
+{% endblock %}
+
 {% block body %}
+    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
     <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
         <div id="figureTitle" class="text-center">
@@ -12,34 +16,37 @@
             </div>
         {% endif %}
     </div>
-
-    <div class="row fadeOnModal" id="figureMedias">
-        {% for picture in figure.pictures %}
-            <div class="figurePicture mx-auto col-sm-6 col-md-4 col-lg-4 col-xl-3 border border-dark">
-                <img src="{{ asset(picture.url) }}" width="100%">
-            </div>
-        {% endfor %}
-        {% for video in figure.videos %}
-            <div class="figureVideo col-sm-6 col-md-4 col-lg-4 col-xl-3 border border-dark">
-                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <script>
-                var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                var url = "{{ video.url }}";
-                var match = url.match(regExp);
-                if (match && match[2].length == 11)
-                {
-                    var id = match[2];
-                    var embedlink = "http://www.youtube.com/embed/" + id;
-                    var iframe = document.getElementById("video{{ video.id }}");
-                    iframe.src = embedlink;
-                }
-            </script>
-        {% endfor %}
-    </div>
-
-    <div class="row text-center" id="seeMedias">
-        <button class="btn btn-info col-10 mt-3">Voir les médias</button>
+    <hr>
+    <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+        <h2>Médias</h2>
+        <div class="row">
+            {% for picture in figure.pictures %}
+                <div class="card col-4 p-2 m-2 align-middle">
+                    <div class="card-img-top">
+                        <img src="{{ asset(picture.url) }}" width="100%">
+                    </div>
+                </div>
+            {% endfor %}
+            {% for video in figure.videos %}
+                <div class="card col-4 p-2 m-2 align-middle">
+                    <div class="card-img-top">
+                        <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <script>
+                        var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                        var url = "{{ video.url }}";
+                        var match = url.match(regExp);
+                        if (match && match[2].length == 11)
+                        {
+                            var id = match[2];
+                            var embedlink = "http://www.youtube.com/embed/" + id;
+                            var iframe = document.getElementById("video{{ video.id }}");
+                            iframe.src = embedlink;
+                        }
+                    </script>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="row">
@@ -55,11 +62,9 @@
             <p class="col">Catégorie : {{ figure.category.name }}</p>
         </div>
     </div>
-
     <hr>
-
     <section id="comments" class="fadeOnModal">
-        {% for comment in figure.comments | slice(0,5) %}
+        {% for comment in comments | slice(0,5) %}
             <div class="comment row mx-auto">
                 <div class="col-md-10 col-12 mx-auto row">
                     <p class="col-lg-10 col-8 bg-light">
@@ -71,7 +76,7 @@
         {% endfor %}
     </section>
     <div class="row text-center fadeOnModal">
-        <button id="loadMoreComments" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
+        <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     <!-- The Modal/Lightbox -->
     <div id="imageModal" class="modal rounded mx-auto">
@@ -82,7 +87,6 @@
 {% block scripts %}
     {{ parent() }}
     <script>
-        $("#figureMedias").hide();
         $(".figurePicture img").click(function() {
             $(".fadeOnModal").fadeTo("slow" , 0.5);
             $(".modal img").attr("src", this.src);
@@ -94,9 +98,10 @@
             $("#imageModal").hide();
         });
 
-        $("#seeMedias").click(function() {
-            $("#figureMedias").show();
-            $("#seeMedias").hide();
-        });
+        function loadMoreComments(){
+            $.get( $(location).attr("href")+"/"+($("#comments > div").length), function( data ) {
+                $('#comments').append(data);
+            });
+        }
     </script>
 {% endblock %}

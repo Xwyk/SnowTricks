@@ -10,7 +10,9 @@ use App\Entity\User;
 use App\Entity\Video;
 use App\Form\FigureType;
 use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
 use App\Repository\FigureRepository;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,32 +21,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FigureController extends AbstractController
 {
-    /**
-     * @Route("/", name="home")
-     * @param FigureRepository $repository
-     * @return Response
-     */
-    public function home(FigureRepository $repository): Response
-    {
-        $figures = $repository->findBy([], ['creationDate' => 'DESC'], 12, 0);
-        return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
-    }
-
-    /**
-     * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
-     *
-     * @Route("/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
-     */
-    public function loadMoreFigures(FigureRepository $repo, $start)
-    {
-        // Get 15 tricks from the start position
-        $figures = $repo->findBy([], ['creationDate' => 'DESC'], 12, $start);
-
-        return $this->render('snowtricks/loadMoreFigures.html.twig', [
-            'figures' => $figures
-        ]);
-    }
-
     /**
      * @Route("/figure/add", name="figure_add")
      * @param Request $request
@@ -55,12 +31,12 @@ class FigureController extends AbstractController
     {
         $form = $this->createForm(FigureType::class);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             $figure = $form->getData();
             $manager->persist($figure);
             $manager->flush();
 
-            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
+            return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
         return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
     }
@@ -77,11 +53,11 @@ class FigureController extends AbstractController
     {
         $form = $this->createForm(FigureType::class, $figure, ['entityManager' => $catRepo]);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $manager->persist($figure);
             $manager->flush();
-            return $this->redirectToRoute('figure_show', ['id'=>$figure->getId(), 'slug'=>$figure->getSlug()]);
+            return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
         return $this->render("snowtricks/editFigure.html.twig", ["form" => $form->createView()]);
     }
@@ -103,8 +79,18 @@ class FigureController extends AbstractController
      * @param Figure $figure
      * @return Response
      */
-    public function showOne(Figure $figure): Response
+    public function showOne(Figure $figure, CommentRepository $commentRepo): Response
     {
-        return $this->render("snowtricks/figure.html.twig", ["figure" => $figure]);
+        return $this->render("snowtricks/figure.html.twig", ["figure" => $figure, 'comments' => $commentRepo->findBy(['figure' => $figure], ['creationDate' => 'DESC'], 5, 0)]);
+    }
+
+    /**
+     * @Route("/figure/{id}-{slug}/{start}", name="loadMoreComments")
+     * @param Figure $figure
+     * @return Response
+     */
+    public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
+    {
+        return $this->render("snowtricks/loadMoreComments.html.twig", ['comments' => $commentRepo->findBy(['figure' => $figure], ['creationDate' => 'DESC'], 5, $start)]);
     }
 }
