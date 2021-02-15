@@ -58,14 +58,4 @@ class FigureType extends AbstractType
             'entityManager' => null,
         ]);
     }
-
-
-    private function fillBusinessUnit(EntityRepository $em)
-    {
-        $categories = array();
-        foreach ($em->findAll() as $category ){
-            $categories[] = array("id" => $category->getId(), "name" => $category->getName());
-        }
-        return $categories;
-    }
 }
