@@ -1,21 +1,100 @@
 {% extends "base.html.twig" %}
 {% block body %}
-    {{ figure.name }}
-    <br>
-    {{ figure.description }}
-    <br>
-    {{ figure.creationDate|date("d/m/Y à H:i") }}
-    <br>
-    {% for picture in figure.pictures %}
-        <img src="{{ picture.url }}">
-        <br>
-    {% endfor %}
-    {% for video in figure.videos %}
-        <img src="{{ video.url }}">
-        <br>
-    {% endfor %}
-    {% for comment in figure.comments %}
-        <p>Posté par {{ comment.author.pseudo }} le {{ comment.creationDate|date("d/m/Y à H:i") }} : {{ comment.content }}</p>
-        <br>
-    {% endfor %}
+    <div id="figureMainImage" class="position-relative border border-dark">
+        <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
+        <div id="figureTitle" class="text-center">
+            <h1>{{ figure.name }}</h1>
+        </div>
+        {% if app.user %}
+            <div class="operations">
+                <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
+                {# <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer le trick : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+            #}</div>
+        {% endif %}
+    </div>
+
+    <div class="row" id="figureMedias">
+        {% for picture in figure.pictures %}
+            <div class="figurePicture mx-auto col-sm-6 col-md-4 col-lg-4 col-xl-3 border border-dark">
+                <img src="{{ asset(picture.url) }}" width="100%">
+            </div>
+        {% endfor %}
+        {% for video in figure.videos %}
+            <div class="figureVideo col-sm-6 col-md-4 col-lg-4 col-xl-3 border border-dark">
+                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <script>
+                var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                var url = "{{ video.url }}";
+                var match = url.match(regExp);
+                if (match && match[2].length == 11)
+                {
+                    var id = match[2];
+                    var embedlink = "http://www.youtube.com/embed/" + id;
+                    var iframe = document.getElementById("video{{ video.id }}");
+                    iframe.src = embedlink;
+                }
+            </script>
+        {% endfor %}
+    </div>
+
+    <div class="row text-center" id="seeMedias">
+        <button class="btn btn-info col-10 mt-3">Voir les médias</button>
+    </div>
+
+    <div class="row">
+        <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
+            <h3>Description :</h3>
+            {{ figure.description | raw }}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
+            <p class="col">Publié le {{ figure.creationDate | date('d/m/Y') }} à {{ figure.creationDate | date('H:i') }}</p>
+            <p class="col">Catégorie : {{ figure.category.name }}</p>
+        </div>
+    </div>
+
+    <hr>
+
+    <section id="comments">
+        {% for comment in figure.comments | slice(0,5) %}
+            <div class="comment row mx-auto">
+                <div class="col-md-10 col-12 mx-auto row">
+                    <p class="col-lg-10 col-8 bg-light">
+                        <strong>{{ comment.author.pseudo }}</strong> <small class="text-muted">({{ comment.creationDate | date('d/m/Y à H:i') }}) :</small>
+                        <br>{{ comment.content }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+    <div class="row text-center">
+        <button id="loadMoreComments" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
+    </div>
+    <!-- The Modal/Lightbox -->
+    <div id="imageModal" class="modal">
+        <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
+        <img src="#" alt="">
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ parent() }}
+    <script>
+        $("#figureMedias").hide();
+        $(".figurePicture img").click(function() {
+            $(".modal img").attr("src", this.src);
+            $("#imageModal").show();
+        });
+
+        $(".close.cursor").click(function() {
+            $("#imageModal").hide();
+        });
+
+        $("#seeMedias").click(function() {
+            $("#figureMedias").show();
+            $("#seeMedias").hide();
+        });
+    </script>
 {% endblock %}

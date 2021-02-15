@@ -22,10 +22,25 @@ class FigureController extends AbstractController
      * @param FigureRepository $repository
      * @return Response
      */
-    public function showAll(FigureRepository $repository): Response
+    public function home(FigureRepository $repository): Response
     {
-        $figures = $repository->findAll();
+        $figures = $repository->findBy([], ['creationDate' => 'DESC'], 12, 0);
         return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
+    }
+
+    /**
+     * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
+     *
+     * @Route("/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
+     */
+    public function loadMoreFigures(FigureRepository $repo, $start)
+    {
+        // Get 15 tricks from the start position
+        $figures = $repo->findBy([], ['creationDate' => 'DESC'], 12, $start);
+
+        return $this->render('snowtricks/loadMoreFigures.html.twig', [
+            'figures' => $figures
+        ]);
     }
 
     /**
