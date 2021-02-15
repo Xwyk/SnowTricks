@@ -9,6 +9,7 @@ use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Video;
 use App\Form\FigureType;
+use App\Repository\CategoryRepository;
 use App\Repository\FigureRepository;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -69,11 +70,12 @@ class FigureController extends AbstractController
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
+     * @param CategoryRepository $catRepo
      * @return Response
      */
-    public function edit(Request $request, ObjectManager $manager, Figure $figure): Response
+    public function edit(Request $request, ObjectManager $manager, Figure $figure, CategoryRepository $catRepo): Response
     {
-        $form = $this->createForm(new FigureType($this->getDoctrine()->getManager(Category::class)), $figure);
+        $form = $this->createForm(FigureType::class, $figure, ['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()){
 
