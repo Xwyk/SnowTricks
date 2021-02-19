@@ -2,27 +2,43 @@
 {% form_theme form "figure/video.html.twig" %}
 {% block body %}
     {{ form_start(form) }}
+    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
     <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+        <img class="w-100" src="">
         <div id="figureTitle" class="text-center">
-            <h1>{{ form_row(form.name, {
-                    'label' : "Nom du trick",
-                    'attr' : {
-                        'placeholder' : 'Nom du trick (doit être unique)'
-                    }
-                })  }}</h1>
+            <h1>{{ form_widget(form.name) }}</h1>
+        </div>
+        <div class="operations">
         </div>
     </div>
+    <hr>
+    <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+        <h2>Médias</h2>
+        <div class="row">
 
-        {{ form_row(form.videos) }}
-    {{ form_row(form.pictures) }}
+            {% for video in form.videos %}
+                <div id="videos">
+                <fieldset class="card col-4 p-2 m-2 align-middle">
+                    <div class="card-img-top">
+                        <iframe class="videoOnEdit" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen src="{{ video.vars.value.url }}"></iframe>
+                    </div>
+                </fieldset>
+                </div
+            {% endfor %}
+            {% for picture in form.pictures %}
+                <div class="card col-4 p-2 m-2 align-middle">
+                    <div class="card-img-top">
 
-    <div class="row text-center" id="seeMedias">
-        <button class="btn btn-info col-10 mt-3">Voir les médias</button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 
     <div class="row">
         <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
-            {{ form_row(form.description, {
+            <h3>Description :</h3>
+            {{ form_widget(form.description, {
                 'label' : "Description du trick",
                 'attr' : {
                     'placeholder' : 'Description du trick'
@@ -30,17 +46,12 @@
             }) }}
         </div>
     </div>
-
-        <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
-            {# <p class="col">Catégorie : {{ figure.category.name }}</p>#}
-        </div>
-    <button class="btn btn-success" type="submit">Ajouter l'article</button>
-
     {{ form_end(form) }}
 {% endblock %}
 {% block scripts %}
     {{ parent() }}
     <script src="{{ asset('js/figureEdition.js') }}"></script>
+
 {% endblock %}
 {% block externalCSS %}
     {{ parent() }}

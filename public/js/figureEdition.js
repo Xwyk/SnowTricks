@@ -1,6 +1,7 @@
+
 jQuery(document).ready(function () {
     // Get videos collection holder element, and assigning index
-    const $videosCollectionHolder = $('#figure_videos');
+    const $videosCollectionHolder = $('#videos');
     addAddButton($videosCollectionHolder, "Ajouter une video");
     $videosCollectionHolder.data('index', $videosCollectionHolder.find('fieldset').length);
 
@@ -22,7 +23,7 @@ jQuery(document).ready(function () {
     }
 
     // Modifying dimensions of stored iframe video
-    for(const $elt of $('.videoOnEdit>iframe')){
+    for(const $elt of $('.videoOnEdit')){
         const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         const url = $($elt).attr('src');
         const match = url.match(regExp);

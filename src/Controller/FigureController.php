@@ -87,6 +87,8 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}/{start}", name="loadMoreComments")
      * @param Figure $figure
+     * @param CommentRepository $commentRepo
+     * @param int $start
      * @return Response
      */
     public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
