@@ -1,18 +1,11 @@
-#figureMedias > .row {
+#figureMedias.row{
+    display: inline-block;
+}
+#videosCollectionHolder, #picturesCollectionHolder {
     display: block; /* contexte sur le parent */
     overflow-x: auto;
     white-space: nowrap;
 }
-#figureMedias > .row > .col-4 {
-    display: inline-block;
-}
-
-    /* The heart of the matter */
-.testimonial-group > .row {
-    overflow-x: auto;
-    white-space: nowrap;
-
-}
-.testimonial-group > .row > .col-4 {
+#figureMedias #figure_videos fieldset, #figureMedias .card{
     display: inline-block;
 }

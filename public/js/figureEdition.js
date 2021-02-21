@@ -1,38 +1,40 @@
-
 jQuery(document).ready(function () {
     // Get videos collection holder element, and assigning index
-    const $videosCollectionHolder = $('#videos');
+    const $videosCollectionHolder = $('#videosCollectionHolder');
     addAddButton($videosCollectionHolder, "Ajouter une video");
     $videosCollectionHolder.data('index', $videosCollectionHolder.find('fieldset').length);
 
-    // Add remove for each video element
-    // /!\ Use fieldset as primary child element
-    for (const $elt of $videosCollectionHolder.find('fieldset')){
+    // Add remove button for each video element
+    // /!\ Use fieldset as child element
+    for (const $elt of $videosCollectionHolder.find('#figure_videos fieldset')){
         addRemoveButton($elt, $videosCollectionHolder);
+
+        // Add event listener on change, update embed version of video in iframe
+        $($elt).find('textarea').change((e) => {
+            e.preventDefault();
+            // Get new url
+            const newUrl = $($elt).find('textarea').val();
+            // Set new iframe src
+            $($elt).find('iframe').attr('src', newUrl);
+            // Convert video URL to embed version in iframe
+            srcToEmbed($($elt).find('iframe'));
+        });
     }
 
     // Get pictures collection holder element, and assigning index
-    const $picturesCollectionHolder = $('#figure_pictures');
+    const $picturesCollectionHolder = $('#picturesCollectionHolder');
     addAddButton($picturesCollectionHolder, "Ajouter une image");
     $picturesCollectionHolder.data('index', $picturesCollectionHolder.find('fieldset').length);
 
     // Add remove for each video element
     // /!\ Use fieldset as primary child element
-    for (const $elt of $picturesCollectionHolder.find('fieldset')){
+    for (const $elt of $picturesCollectionHolder.find('#figure_pictures fieldset')){
         addRemoveButton($elt, $picturesCollectionHolder);
     }
 
     // Modifying dimensions of stored iframe video
-    for(const $elt of $('.videoOnEdit')){
-        const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const url = $($elt).attr('src');
-        const match = url.match(regExp);
-        if (match && match[2].length == 11)
-        {
-            const id = match[2];
-            const embedlink = "http://www.youtube.com/embed/" + id;
-            $($elt).attr('src', embedlink);
-        }
+    for(const $elt of $videosCollectionHolder){
+
     }
 });
 
@@ -43,13 +45,16 @@ jQuery(document).ready(function () {
  */
 function addAddButton($elt, value) {
     const button = document.createElement('button');
+    const div = document.createElement('button');
     button.className = "btn btn-primary";
+    div.className = "row";
     button.innerText = value;
     button.addEventListener('click', (e) => {
         e.preventDefault();
         addFormToCollection($elt);
     });
-    $elt.after(button);
+    $(div).append(button);
+    $elt.after(div);
 }
 
 /**
@@ -78,10 +83,19 @@ function addFormToCollection($collectionHolder) {
     // Get prototype, index & create form of prototype
     const prototype = $collectionHolder.data('prototype');
     let index = $collectionHolder.data('index');
-    const $newForm = $(prototype);
-
+    const $newForm = $(prototype).find('fieldset');
     // Update collection index, add form and add a remove button to that form
     $collectionHolder.data('index', index++);
-    $collectionHolder.append($newForm);
+    $collectionHolder.find('#figure_videos').append($newForm);
+    $($newForm).find('textarea').change((e) => {
+        e.preventDefault();
+        // Get new url
+        const newUrl = $($newForm).find('textarea').val();
+        // Set new iframe src
+        $($newForm).find('iframe').attr('src', newUrl);
+        // Convert video URL to embed version in iframe
+        srcToEmbed($($newForm).find('iframe'));
+    });
     addRemoveButton($newForm,$collectionHolder);
 }
+

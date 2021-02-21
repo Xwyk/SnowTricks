@@ -1,28 +1,17 @@
-{% block _figure_videos_entry5_row %}
-    <div class="card col-4 p-2 m-2 align-middle">
-        <div class="card-img-top">
-            {% dump(form.vars.value) %}
-            <iframe class="videoOnEdit" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen src=""></iframe>
-        </div>
-    </div>
-{% endblock %}
-{% block _figure_videos_rowg %}
-        {{ form_row(form, {'attr': {'class': 'row justify-content-md-center'}}) }}
+{% block _figure_videos_entry_row %}
+    {{ form_row(form.url) }}
 {% endblock %}
 
-{# Card template for video entry #}
-{% block _figure_videos_entrjy_row %}
-    <fieldset class="card col-sm-6 col-md-4 col-lg-4 col-xl-3 p-2">
-        <div class="card-img-top videoOnEdit figureVideo">
-            <iframe width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ form.url.vars.data }}"allowfullscreen></iframe>
+{% block _figure_videos_entry_url_row %}
+    <fieldset class="card col-4 p-2 m-2 align-middle">
+        <div class="card-img-top">
+            {{ form_widget(form) }}
         </div>
-            <h5 class="card-title">{{ form_label(form.url) }}</h5>
-            <p class="card-text">
-                {{ form_errors(form.url) }}
-                {{ form_widget(form.url) }}</p>
-            <div class="removeBtn"></div>
     </fieldset>
 {% endblock %}
-{% block externalCSS %}
-    <link rel="stylesheet" href="{{ asset("css/video.css") }}">
+
+{% block _figure_videos_entry_url_widget %}
+    <iframe class="video" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ form.vars.data }}" allowfullscreen></iframe>
+    {{ form_widget(form) }}
+    <div class="removeBtn"></div>
 {% endblock %}

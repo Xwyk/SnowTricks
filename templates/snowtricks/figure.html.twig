@@ -1,68 +1,80 @@
 {% extends "base.html.twig" %}
 {% block externalCSS %}
+    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
 {% endblock %}
 
 {% block body %}
-    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
     <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+        {% block mainImage %}
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
+        {% endblock %}
         <div id="figureTitle" class="text-center">
-            <h1>{{ figure.name }}</h1>
+            {% block figureTitle %}
+                <h1>{{ figure.name }}</h1>
+            {% endblock %}
         </div>
-        {% if app.user %}
-            <div class="operations">
-                <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
-                <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
-            </div>
-        {% endif %}
+        {% block operations %}
+            {% if app.user %}
+                <div class="operations">
+                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
+                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+                </div>
+            {% endif %}
+        {% endblock %}
+
     </div>
     <hr>
     <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
         <h2>Médias</h2>
-        <div class="row">
-            {% for picture in figure.pictures %}
-                <div class="card col-4 p-2 m-2 align-middle">
-                    <div class="card-img-top">
-                        <img src="{{ asset(picture.url) }}" width="100%">
+        <div class="row" id="picturesCollectionHolder">
+            {% block pictures %}
+
+                {% for picture in figure.pictures %}
+                    <div class="card col-4 p-2 m-2 align-middle">
+                        <div class="card-img-top">
+                            <img src="{{ asset(picture.url) }}" width="100%">
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
-            {% for video in figure.videos %}
-                <div class="card col-4 p-2 m-2 align-middle">
-                    <div class="card-img-top">
-                        <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <script>
-                        var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                        var url = "{{ video.url }}";
-                        var match = url.match(regExp);
-                        if (match && match[2].length == 11)
-                        {
-                            var id = match[2];
-                            var embedlink = "http://www.youtube.com/embed/" + id;
-                            var iframe = document.getElementById("video{{ video.id }}");
-                            iframe.src = embedlink;
-                        }
-                    </script>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            {% endblock %}
         </div>
+            {% block videos %}
+                <div class="row" id="videosCollectionHolder">
+                {% for video in figure.videos %}
+                    <div class="card col-4 p-2 m-2 align-middle">
+                        <div class="card-img-top">
+                            <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endblock %}
     </div>
 
     <div class="row">
         <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
+            {% block description %}
+
             <h3>Description :</h3>
             {{ figure.description | raw }}
+            {% endblock %}
+
         </div>
     </div>
 
     <div class="row fadeOnModal">
         <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
+            {% block infos %}
+
             <p class="col">Publié le {{ figure.creationDate | date('d/m/Y') }} à {{ figure.creationDate | date('H:i') }}</p>
             <p class="col">Catégorie : {{ figure.category.name }}</p>
+            {% endblock %}
+
         </div>
     </div>
     <hr>
+    {% block comments %}
+
     <section id="comments" class="fadeOnModal">
         {% for comment in comments | slice(0,5) %}
             <div class="comment row mx-auto">
@@ -78,6 +90,8 @@
     <div class="row text-center fadeOnModal">
         <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
+    {% endblock %}
+
     <!-- The Modal/Lightbox -->
     <div id="imageModal" class="modal rounded mx-auto">
         <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
@@ -104,4 +118,5 @@
             });
         }
     </script>
+        <script src="{{ asset('js/figure.js') }}"></script>
 {% endblock %}

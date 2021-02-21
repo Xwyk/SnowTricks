@@ -1,57 +1,53 @@
-{% extends "base.html.twig" %}
-{% form_theme form "figure/video.html.twig" %}
+{% extends "snowtricks/figure.html.twig" %}
+{% form_theme form with [
+    'figure/video.html.twig',
+    'figure/picture.html.twig'
+    ] %}
+{% block mainImage %}
+{% endblock %}
+{% block figureTitle %}
+    <h1>{{ form_widget(form.name) }}</h1>
+{% endblock %}
+ {% block operations %}
+     <div class="operations">
+         {# <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+     #}
+     </div>
+ {% endblock %}
+
+{% block pictures %}
+    <div class="row" id="picturesCollectionHolder" data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
+        {{ form_row(form.pictures) }}
+    </div>
+{% endblock %}
+
+{% block videos %}
+    <div class="row" id="videosCollectionHolder" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+    {{ form_row(form.videos) }}
+    </div>
+{% endblock %}
+{% block description %}
+
+    <h3>Description :</h3>
+    {{ form_widget(form.description) }}
+{% endblock %}
+
+{% block comments %}
+{% endblock %}
+
+{% block infos %}
+    <p class="col">Catégorie : {{ form_widget(form.category) }}</p>
+{% endblock %}
+
 {% block body %}
     {{ form_start(form) }}
-    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
-    <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
-        <img class="w-100" src="">
-        <div id="figureTitle" class="text-center">
-            <h1>{{ form_widget(form.name) }}</h1>
-        </div>
-        <div class="operations">
-        </div>
-    </div>
-    <hr>
-    <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
-        <h2>Médias</h2>
-        <div class="row">
-
-            {% for video in form.videos %}
-                <div id="videos">
-                <fieldset class="card col-4 p-2 m-2 align-middle">
-                    <div class="card-img-top">
-                        <iframe class="videoOnEdit" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen src="{{ video.vars.value.url }}"></iframe>
-                    </div>
-                </fieldset>
-                </div
-            {% endfor %}
-            {% for picture in form.pictures %}
-                <div class="card col-4 p-2 m-2 align-middle">
-                    <div class="card-img-top">
-
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <div class="row">
-        <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
-            <h3>Description :</h3>
-            {{ form_widget(form.description, {
-                'label' : "Description du trick",
-                'attr' : {
-                    'placeholder' : 'Description du trick'
-                }
-            }) }}
-        </div>
-    </div>
+    {{ parent() }}
+    <button class="btn btn-success" type="submit">Valider</button>
     {{ form_end(form) }}
 {% endblock %}
 {% block scripts %}
     {{ parent() }}
     <script src="{{ asset('js/figureEdition.js') }}"></script>
-
 {% endblock %}
 {% block externalCSS %}
     {{ parent() }}
