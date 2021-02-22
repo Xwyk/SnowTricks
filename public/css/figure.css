@@ -1,9 +1,8 @@
-
-#videosCollectionHolder, #picturesCollectionHolder {
+#figureMedias>.row {
     display: block; /* contexte sur le parent */
     overflow-x: auto;
     white-space: nowrap;
 }
-#figureMedias #figure_videos fieldset, #figureMedias .card{
+#figureMedias fieldset, #figureMedias .card{
     display: inline-block;
 }

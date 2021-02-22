@@ -31,11 +31,6 @@ jQuery(document).ready(function () {
     for (const $elt of $picturesCollectionHolder.find('#figure_pictures fieldset')){
         addRemoveButton($elt, $picturesCollectionHolder);
     }
-
-    // Modifying dimensions of stored iframe video
-    for(const $elt of $videosCollectionHolder){
-
-    }
 });
 
 /**
@@ -45,7 +40,7 @@ jQuery(document).ready(function () {
  */
 function addAddButton($elt, value) {
     const button = document.createElement('button');
-    const div = document.createElement('button');
+    const div = document.createElement('div');
     button.className = "btn btn-primary";
     div.className = "row";
     button.innerText = value;
@@ -84,9 +79,12 @@ function addFormToCollection($collectionHolder) {
     const prototype = $collectionHolder.data('prototype');
     let index = $collectionHolder.data('index');
     const $newForm = $(prototype).find('fieldset');
+    console.log(prototype);
+    console.log(index);
+    console.log($newForm);
     // Update collection index, add form and add a remove button to that form
     $collectionHolder.data('index', index++);
-    $collectionHolder.find('#figure_videos').append($newForm);
+    $collectionHolder.find('.form-group>div').append($newForm);
     $($newForm).find('textarea').change((e) => {
         e.preventDefault();
         // Get new url

@@ -26,9 +26,9 @@
     <hr>
     <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
         <h2>Médias</h2>
-        <div class="row" id="picturesCollectionHolder">
-            {% block pictures %}
 
+            {% block pictures %}
+            <div class="row" id="picturesCollectionHolder">
                 {% for picture in figure.pictures %}
                     <div class="card col-4 p-2 m-2 align-middle">
                         <div class="card-img-top">
@@ -36,8 +36,9 @@
                         </div>
                     </div>
                 {% endfor %}
+            </div>
+
             {% endblock %}
-        </div>
             {% block videos %}
                 <div class="row" id="videosCollectionHolder">
                 {% for video in figure.videos %}

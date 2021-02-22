@@ -1,29 +1,28 @@
 {% block _figure_pictures_entry_row %}
     <fieldset class="card col-4 p-2 m-2 align-middle">
         <div class="card-img-top">
-            {{ form_row(form.url) }}
-            <div class="card-body">
+            <img class="picture" width="100%" src="{{ form.vars.value.url }}"/>
+        </div>
+        <div class="card-body">
             {{ form_row(form.image) }}
-
             <div class="removeBtn"></div>
-            </div>
         </div>
     </fieldset>
 {% endblock %}
 
 {% block _figure_pictures_entry_url_row %}
-    {{ form_widget(form) }}
+{% dump(form) %}
 {% endblock %}
 
 {% block _figure_pictures_entry_url_widget %}
     <img class="picture" width="100%" src="{{ form.vars.data }}"/>
-    <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}"/>
+    <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.data }}"/>
 {% endblock %}
 
 {% block _figure_pictures_entry_image_widget %}
-    {{ form_widget(form) }}
+    <input type="file" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}">
 {% endblock %}
 
 {% block _figure_pictures_entry_image_row %}
-    <input type="file" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}">
+    {{ form_widget(form) }}
 {% endblock %}
