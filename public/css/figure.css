@@ -1,6 +1,4 @@
-#figureMedias.row{
-    display: inline-block;
-}
+
 #videosCollectionHolder, #picturesCollectionHolder {
     display: block; /* contexte sur le parent */
     overflow-x: auto;
