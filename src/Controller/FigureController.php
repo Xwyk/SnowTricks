@@ -25,11 +25,12 @@ class FigureController extends AbstractController
      * @Route("/figure/add", name="figure_add")
      * @param Request $request
      * @param ObjectManager $manager
+     * @param CategoryRepository $catRepo
      * @return Response
      */
-    public function add(Request $request, ObjectManager $manager): Response
+    public function add(Request $request, ObjectManager $manager, CategoryRepository $catRepo): Response
     {
-        $form = $this->createForm(FigureType::class);
+        $form = $this->createForm(FigureType::class, null,['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $figure = $form->getData();

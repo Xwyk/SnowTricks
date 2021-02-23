@@ -5,14 +5,18 @@
 
 {% block body %}
     <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+        {% block pageTitle %}
+        {% endblock %}
         {% block mainImage %}
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
         {% endblock %}
-        <div id="figureTitle" class="text-center">
-            {% block figureTitle %}
+    </div>
+    <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+        {% block figureTitle %}
+            <div id="figureName" class="text-center">
                 <h1>{{ figure.name }}</h1>
-            {% endblock %}
-        </div>
+            </div>
+        {% endblock %}
         {% block operations %}
             {% if app.user %}
                 <div class="operations">
@@ -21,10 +25,9 @@
                 </div>
             {% endif %}
         {% endblock %}
-
     </div>
     <hr>
-    <div id="figureMedias" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light">
         <h2>Médias</h2>
 
             {% block pictures %}

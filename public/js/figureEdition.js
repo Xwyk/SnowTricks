@@ -48,7 +48,7 @@ function addAddButton($elt, value) {
         e.preventDefault();
         addFormToCollection($elt);
     });
-    $(div).append(button);
+    $elt.after(button);
     $elt.after(div);
 }
 
@@ -78,9 +78,7 @@ function addFormToCollection($collectionHolder) {
     // Get prototype, index & create form of prototype
     const prototype = $collectionHolder.data('prototype');
     let index = $collectionHolder.data('index');
-    const $newForm = $(prototype).find('fieldset');
-    console.log(prototype);
-    console.log(index);
+    const $newForm = $(prototype);
     console.log($newForm);
     // Update collection index, add form and add a remove button to that form
     $collectionHolder.data('index', index++);
