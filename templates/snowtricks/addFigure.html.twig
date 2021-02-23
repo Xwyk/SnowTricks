@@ -1,8 +1,13 @@
 {% extends "base.html.twig" %}
-{% form_theme form "figure/video.html.twig" %}
-{% block body %}
-    {{ form_start(form) }}
+{% form_theme form with [
+    'figure/video.html.twig',
+    'figure/picture.html.twig',
+    'figure/figure.html.twig'
+] %}
 
+{% block body %}
+    <h1 class="text-center">Edition du trick</h1>
+    {{ form_start(form) }}
     {{ form_row(form.name, {
         'label' : "Nom du trick",
         'attr' : {
@@ -10,26 +15,34 @@
         }
     }) }}
 
+    <div id="figureMedias">
+        <div class="row" id="picturesCollectionHolder"
+             data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
+            {{ form_row(form.pictures) }}
+        </div>
+        <div class="row" id="videosCollectionHolder" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+            {{ form_row(form.videos) }}
+        </div>
+    </div>
+
     {{ form_row(form.description, {
         'label' : "Description du trick",
         'attr' : {
-            'placeholder' : 'Description du trick'
+            'placeholder' : 'Description du trick '
         }
     }) }}
-
-    <p>Ajouter des vidéos pour illustrer votre trick !</p>
-    {{ form_row(form.videos) }}
-    {{ form_row(form.pictures) }}
-
-
-    <button class="btn btn-success" type="submit">Ajouter l'article</button>
-
+    <p class="col">Catégorie : {{ form_widget(form.category) }}</p>
+    <button class="btn btn-success" type="submit">Valider</button>
     {{ form_end(form) }}
 {% endblock %}
 
 {% block scripts %}
+    {{ parent() }}
     <script src="{{ asset('js/figureEdition.js') }}"></script>
+    <script src="{{ asset('js/figure.js') }}"></script>
 {% endblock %}
 {% block externalCSS %}
+    {{ parent() }}
     <link rel="stylesheet" href="{{ asset("css/video.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/figure.css") }}">
 {% endblock %}

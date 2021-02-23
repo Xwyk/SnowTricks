@@ -23,7 +23,7 @@ jQuery(document).ready(function () {
 
     // Get pictures collection holder element, and assigning index
     const $picturesCollectionHolder = $('#picturesCollectionHolder');
-    addAddButton($picturesCollectionHolder, "Ajouter une image");
+    addAddButton($picturesCollectionHolder, "Ajouter une image", false);
     $picturesCollectionHolder.data('index', $picturesCollectionHolder.find('fieldset').length);
 
     // Add remove for each video element
@@ -38,17 +38,24 @@ jQuery(document).ready(function () {
  * @param $elt element
  * @param value button text value
  */
-function addAddButton($elt, value) {
+function addAddButton($elt, value, isVideo = true) {
     const button = document.createElement('button');
     const div = document.createElement('div');
     button.className = "btn btn-primary";
     div.className = "row";
     button.innerText = value;
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        addFormToCollection($elt);
-    });
-    $elt.after(button);
+    if (isVideo){
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            addFormToCollection($elt);
+        });
+    } else {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            addFormToCollection($elt, false);
+        });
+    }
+        $elt.after(button);
     $elt.after(div);
 }
 
@@ -74,24 +81,37 @@ function addRemoveButton($elt, $collectionHolder){
  * Add new element to collection holder by getting it's prototype
  * @param $collectionHolder collection holder
  */
-function addFormToCollection($collectionHolder) {
+function addFormToCollection($collectionHolder, isVideo = true) {
     // Get prototype, index & create form of prototype
     const prototype = $collectionHolder.data('prototype');
     let index = $collectionHolder.data('index');
     const $newForm = $(prototype);
-    console.log($newForm);
     // Update collection index, add form and add a remove button to that form
     $collectionHolder.data('index', index++);
     $collectionHolder.find('.form-group>div').append($newForm);
-    $($newForm).find('textarea').change((e) => {
-        e.preventDefault();
-        // Get new url
-        const newUrl = $($newForm).find('textarea').val();
-        // Set new iframe src
-        $($newForm).find('iframe').attr('src', newUrl);
-        // Convert video URL to embed version in iframe
-        srcToEmbed($($newForm).find('iframe'));
-    });
+    console.log(isVideo);
+    if (isVideo){
+        $($newForm).find('.dynamic-entry').change((e) => {
+            e.preventDefault();
+            // Get new url
+            const newUrl = $($newForm).find('.dynamic-entry').val();
+            // Set new iframe src
+            $($newForm).find('.dynamic-display').attr('src', newUrl);
+            // Convert video URL to embed version in iframe
+            srcToEmbed($($newForm).find('.dynamic-display'));
+        });
+    } else{
+        // Add event listener on change, update embed version of video in iframe
+        $($newForm).find('.dynamic-entry').on("change", (e) => {
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.readAsDataURL(e.target.files[0]);
+            reader.onload = function () {
+                $($newForm).find('.dynamic-display').attr('src', reader.result);
+            };
+        });
+    }
+
     addRemoveButton($newForm,$collectionHolder);
 }
 

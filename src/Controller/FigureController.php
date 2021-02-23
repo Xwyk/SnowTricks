@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FigureController extends AbstractController
 {
@@ -28,14 +29,41 @@ class FigureController extends AbstractController
      * @param CategoryRepository $catRepo
      * @return Response
      */
-    public function add(Request $request, ObjectManager $manager, CategoryRepository $catRepo): Response
+    public function add(Request $request, ObjectManager $manager, CategoryRepository $catRepo, SluggerInterface $slugger): Response
     {
-        $form = $this->createForm(FigureType::class, null,['entityManager' => $catRepo]);
+        $figure = new Figure();
+        $form = $this->createForm(FigureType::class, $figure,['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($form->get('pictures') as $pictureForm){
+               $pictureToUpload = $pictureForm->get('image')->getData();
+
+                if ($pictureToUpload) {
+                    $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
+
+                    // Move the file to the directory where brochures are stored
+                    try {
+                        $pictureToUpload->move(
+                            $this->getParameter('pictures_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    // updates the 'brochureFilename' property to store the PDF file name
+                    // instead of its contents
+                    $pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename));
+//                    $figure->setBrochureFilename($newFilename);
+                }
+            }
             $figure = $form->getData();
             $manager->persist($figure);
             $manager->flush();
+
 
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }

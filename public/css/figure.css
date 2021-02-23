@@ -3,6 +3,11 @@
     overflow-x: auto;
     white-space: nowrap;
 }
+
+#figureMedias>.row>fieldset {
+    width: 100%;
+}
+
 #figureMedias fieldset, #figureMedias .card{
     display: inline-block;
 }
