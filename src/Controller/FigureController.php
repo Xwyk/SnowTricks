@@ -56,7 +56,7 @@ class FigureController extends AbstractController
 
                     // updates the 'brochureFilename' property to store the PDF file name
                     // instead of its contents
-                    $pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename));
+                    $pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename);
 //                    $figure->setBrochureFilename($newFilename);
                 }
             }
