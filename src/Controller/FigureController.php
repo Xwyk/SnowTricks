@@ -35,9 +35,8 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure,['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            foreach ($form->get('pictures') as $pictureForm){
-               $pictureToUpload = $pictureForm->get('image')->getData();
-
+            dd($form->get('pictures')->getData());
+            foreach ($form->get('pictures')->getData() as $picture){
                 if ($pictureToUpload) {
                     $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
                     // this is needed to safely include the file name as part of the URL
@@ -56,7 +55,7 @@ class FigureController extends AbstractController
 
                     // updates the 'brochureFilename' property to store the PDF file name
                     // instead of its contents
-                    $pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename);
+                    //$pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename);
 //                    $figure->setBrochureFilename($newFilename);
                 }
             }

@@ -9,15 +9,10 @@ jQuery(document).ready(function () {
     for (const $elt of $videosCollectionHolder.find('#figure_videos fieldset')){
         addRemoveButton($elt, $videosCollectionHolder);
 
-        // Add event listener on change, update embed version of video in iframe
-        $($elt).find('textarea').change((e) => {
+        $($elt).find('.dynamic-entry').change((e) => {
             e.preventDefault();
-            // Get new url
-            const newUrl = $($elt).find('textarea').val();
-            // Set new iframe src
-            $($elt).find('iframe').attr('src', newUrl);
             // Convert video URL to embed version in iframe
-            srcToEmbed($($elt).find('iframe'));
+            srcToEmbed($($elt));
         });
     }
 
@@ -30,6 +25,14 @@ jQuery(document).ready(function () {
     // /!\ Use fieldset as primary child element
     for (const $elt of $picturesCollectionHolder.find('#figure_pictures fieldset')){
         addRemoveButton($elt, $picturesCollectionHolder);
+        $($elt).find('.dynamic-entry').on("change", (e) => {
+            e.preventDefault();
+            const reader = new FileReader();
+            reader.readAsDataURL(e.target.files[0]);
+            reader.onload = function () {
+                $($elt).find('.dynamic-display').attr('src', reader.result);
+            };
+        });
     }
 });
 
@@ -93,12 +96,8 @@ function addFormToCollection($collectionHolder, isVideo = true) {
     if (isVideo){
         $($newForm).find('.dynamic-entry').change((e) => {
             e.preventDefault();
-            // Get new url
-            const newUrl = $($newForm).find('.dynamic-entry').val();
-            // Set new iframe src
-            $($newForm).find('.dynamic-display').attr('src', newUrl);
             // Convert video URL to embed version in iframe
-            srcToEmbed($($newForm).find('.dynamic-display'));
+            srcToEmbed($($newForm));
         });
     } else{
         // Add event listener on change, update embed version of video in iframe

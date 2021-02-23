@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
-    const $videosCollectionHolder = $('#figureMedias');
+    const $mediasCollectionHolder = $('#figureMedias');
 
-    for (const $elt of $videosCollectionHolder.find('iframe')){
+    for (const $elt of $mediasCollectionHolder.find('fieldset.card')){
         // Convert video URL to embed version in iframe
         srcToEmbed($($elt));
     }
@@ -11,12 +11,22 @@ jQuery(document).ready(function () {
 
 function srcToEmbed($elt){
     const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const url = $($elt).attr('src');
+    const url = $($elt).find('.dynamic-entry').val();
     const match = url.match(regExp);
     if (match && match[2].length == 11)
     {
         const id = match[2];
         const embedlink = "http://www.youtube.com/embed/" + id;
-        $($elt).attr('src', embedlink);
+        $($elt).find('.dynamic-display').attr('src', embedlink);
     }
+}
+
+function inputToBase64(file){
+    const reader = new FileReader();
+    console.log(reader);
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        console.log(reader.result);
+        return reader.result;
+    };
 }
