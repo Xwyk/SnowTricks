@@ -8,6 +8,7 @@ use App\Entity\Media;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Video;
+use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
@@ -15,6 +16,7 @@ use App\Repository\FigureRepository;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,31 +37,17 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure,['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            dd($form->get('pictures')->getData());
-            foreach ($form->get('pictures')->getData() as $picture){
+            // For each picture form in form['pictures'], get uploaded image file,
+            // copy it to public folder and set url attribute value
+            foreach ($form->get('pictures')->getData() as $picture) {
+                $pictureToUpload = $picture->getImage();
                 if ($pictureToUpload) {
-                    $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
-                    // this is needed to safely include the file name as part of the URL
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
-
-                    // Move the file to the directory where brochures are stored
-                    try {
-                        $pictureToUpload->move(
-                            $this->getParameter('pictures_directory'),
-                            $newFilename
-                        );
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                    }
-
-                    // updates the 'brochureFilename' property to store the PDF file name
-                    // instead of its contents
-                    //$pictureForm->get('url')->setData($this->getParameter('pictures_directory').$newFilename);
-//                    $figure->setBrochureFilename($newFilename);
+                    $picture->setUrl($this->uploadPicture($pictureToUpload, $slugger));
                 }
             }
+            // Create figure from form
             $figure = $form->getData();
+            // Persist element in database
             $manager->persist($figure);
             $manager->flush();
 
@@ -75,14 +63,22 @@ class FigureController extends AbstractController
      * @param ObjectManager $manager
      * @param Figure $figure
      * @param CategoryRepository $catRepo
+     * @param SluggerInterface $slugger
      * @return Response
      */
-    public function edit(Request $request, ObjectManager $manager, Figure $figure, CategoryRepository $catRepo): Response
+    public function edit(Request $request, ObjectManager $manager, Figure $figure, CategoryRepository $catRepo, SluggerInterface $slugger): Response
     {
         $form = $this->createForm(FigureType::class, $figure, ['entityManager' => $catRepo]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
+            // For each picture form in form['pictures'], get uploaded image file,
+            // copy it to public folder and set url attribute value
+            foreach ($form->get('pictures')->getData() as $picture) {
+                $pictureToUpload = $picture->getImage();
+                if ($pictureToUpload) {
+                    $picture->setUrl($this->uploadPicture($pictureToUpload, $slugger));
+                }
+            }
             $manager->persist($figure);
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
@@ -105,22 +101,43 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}", name="figure_show")
      * @param Figure $figure
+     * @param CommentRepository $commentRepo
      * @return Response
      */
     public function showOne(Figure $figure, CommentRepository $commentRepo): Response
     {
-        return $this->render("snowtricks/figure.html.twig", ["figure" => $figure, 'comments' => $commentRepo->findBy(['figure' => $figure], ['creationDate' => 'DESC'], 5, 0)]);
+
+
+        return $this->render("snowtricks/figure.html.twig", [
+            "figure" => $figure,
+            'comments' => $commentRepo->findBy(['figure' => $figure],
+            [
+                'creationDate' => 'DESC'
+            ],
+            5,
+            0
+            )
+        ]);
     }
 
-    /**
-     * @Route("/figure/{id}-{slug}/{start}", name="loadMoreComments")
-     * @param Figure $figure
-     * @param CommentRepository $commentRepo
-     * @param int $start
-     * @return Response
-     */
-    public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
-    {
-        return $this->render("snowtricks/loadMoreComments.html.twig", ['comments' => $commentRepo->findBy(['figure' => $figure], ['creationDate' => 'DESC'], 5, $start)]);
+    protected function uploadPicture(File $pictureToUpload, SluggerInterface $slugger){
+            $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
+            // slug filename to keep original name as part of the final name,
+            // and add an uuid to name
+            $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
+
+            // Move to picture directory
+            try {
+                $pictureToUpload->move(
+                    $this->getParameter('root_public_directory').
+                    $this->getParameter('pictures_directory'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+            // Set url attribute of picture element
+            return $this->getParameter('pictures_directory').$newFilename;
     }
 }

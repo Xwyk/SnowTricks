@@ -91,11 +91,12 @@
             </div>
         {% endfor %}
     </section>
+
     <div class="row text-center fadeOnModal">
         <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     {% endblock %}
-
+<button onclick="loadMoreCommentsfdp()">bite</button>
     <!-- The Modal/Lightbox -->
     <div id="imageModal" class="modal rounded mx-auto">
         <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
@@ -104,6 +105,8 @@
 {% endblock %}
 {% block scripts %}
     {{ parent() }}
+    <script src="{{ asset('js/figure.js') }}"></script>
+
     <script>
         $(".figurePicture img").click(function() {
             $(".fadeOnModal").fadeTo("slow" , 0.5);
@@ -116,11 +119,29 @@
             $("#imageModal").hide();
         });
 
+        function loadMoreCommentsfdp(){
+            $.ajax({
+                type: "POST",
+                url: '{{ path('comment_add', {'id': figure.id, 'slug': figure.slug}) }}',
+                data: {
+                    'content': 'fdp'
+                },
+                success: function(data, status){
+                    alert(data);
+                }
+            });
+        }
+
         function loadMoreComments(){
             $.get( $(location).attr("href")+"/"+($("#comments > div").length), function( data ) {
                 $('#comments').append(data);
             });
         }
+        const $videosCollectionHolder = $('#videosCollectionHolder');
+        for (const $elt of $videosCollectionHolder.find('iframe')){
+            $($elt).attr('src', urlToEmbed($($elt).attr('src')));
+        }
+
+
     </script>
-        <script src="{{ asset('js/figure.js') }}"></script>
 {% endblock %}

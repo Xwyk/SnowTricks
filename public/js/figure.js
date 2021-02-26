@@ -21,12 +21,14 @@ function srcToEmbed($elt){
     }
 }
 
-function inputToBase64(file){
-    const reader = new FileReader();
-    console.log(reader);
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-        console.log(reader.result);
-        return reader.result;
-    };
+function urlToEmbed(url){
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length == 11)
+    {
+        const id = match[2];
+        const embed = "http://www.youtube.com/embed/" + id;
+        return embed;
+    }
+    return false;
 }

@@ -69,7 +69,7 @@ class Picture
     /**
      * @return File
      */
-    public function getImage(): File
+    public function getImage(): ?File
     {
         return $this->image;
     }
