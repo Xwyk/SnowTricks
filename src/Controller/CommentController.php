@@ -52,7 +52,7 @@ class CommentController extends AbstractController
         $comment = new Comment();
         $comment->setContent($request->request->get('content'));
         $figure->addComment($comment);
-        $manager->remove($figure);
+        $manager->persist($figure);
         $manager->flush();
         return $this->render("snowtricks/oneMoreComment.html.twig", ['comment' => $comment]);
     }
