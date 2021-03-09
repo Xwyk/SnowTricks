@@ -1,6 +1,7 @@
 {% block _figure_pictures_entry_row %}
     <fieldset class="card col-4 p-2 m-2 align-middle">
         <div class="card-img-top">
+            {{ form_errors(form.image) }}
             {{ form_widget(form.url) }}
         </div>
         <div class="card-body">

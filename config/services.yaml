@@ -8,6 +8,7 @@ parameters:
     root_public_directory: '%kernel.project_dir%/public'
     pictures_directory: '/img/full/'
     figure_comment_step: 5
+    website_url: '127.0.0.1'
 
 services:
     # default configuration for services in *this* file

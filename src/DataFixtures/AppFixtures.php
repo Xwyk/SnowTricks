@@ -30,7 +30,7 @@ class AppFixtures extends Fixture
 
         // Create fake categories
         $categories = array();
-        $names      = array("Les grabs", "Les rotations", "Les flips", "Les rotations désaxées", "Les slides", "Les one foot tricks"," Old school");
+        $names      = array("Les grabs", "Les rotations", "Les flips", "Les rotations désaxées", "Les slides", "Les one foot tricks","Old school");
         for ($i=0; $i < count($names); $i++) {
             $categories[$names[$i]] = new Category();
             $categories[$names[$i]]->setName($names[$i]);

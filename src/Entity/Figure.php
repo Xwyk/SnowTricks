@@ -57,16 +57,20 @@ class Figure
 
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="figures")
+     * @Assert\NotNull()
+     * @Assert\Valid()
      */
     private $category;
 
     /**
      * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="figure", orphanRemoval=true, cascade={"persist"})
+     * @Assert\Valid()
      */
     private $pictures;
 
     /**
      * @ORM\OneToMany(targetEntity=Video::class, mappedBy="figure", orphanRemoval=true, cascade={"persist"})
+     * @Assert\Valid()
      */
     private $videos;
 

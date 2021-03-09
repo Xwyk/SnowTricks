@@ -67,7 +67,7 @@ class RegisterToken
 
     public function generateToken(): self
     {
-        return $this->setToken(openssl_random_pseudo_bytes(self::TOKEN_LENGTH));
+        return $this->setToken(bin2hex(random_bytes(self::TOKEN_LENGTH)));
     }
 
     public function getCreationDate(): ?\DateTimeInterface

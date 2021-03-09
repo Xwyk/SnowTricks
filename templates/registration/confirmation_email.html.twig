@@ -2,7 +2,7 @@
 
 <p>
     Merci de confirmer ton inscription sur Snowtricks : <br><br>
-    <a href="{{ path('app_verify_email', {'token': token.token}) }}">Confirmer mon adresse</a>.
+    <a href="{{ url('app_verify_email', {'token': token.token}) }}">Confirmer mon adresse</a>.
     Ce lien expirera à  {{ token.validityDate|date('g') }} hour(s).
 </p>
 

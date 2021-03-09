@@ -31,10 +31,10 @@ class FigureController extends AbstractController
      * @param CategoryRepository $catRepo
      * @return Response
      */
-    public function add(Request $request, ObjectManager $manager, CategoryRepository $catRepo, SluggerInterface $slugger): Response
+    public function add(Request $request, ObjectManager $manager, SluggerInterface $slugger): Response
     {
         $figure = new Figure();
-        $form = $this->createForm(FigureType::class, $figure,['entityManager' => $catRepo]);
+        $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // For each picture form in form['pictures'], get uploaded image file,
@@ -68,7 +68,7 @@ class FigureController extends AbstractController
      */
     public function edit(Request $request, ObjectManager $manager, Figure $figure, CategoryRepository $catRepo, SluggerInterface $slugger): Response
     {
-        $form = $this->createForm(FigureType::class, $figure, ['entityManager' => $catRepo]);
+        $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             // For each picture form in form['pictures'], get uploaded image file,

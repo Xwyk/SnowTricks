@@ -56,11 +56,6 @@ class User implements UserInterface
     private $comments;
 
     /**
-     * @ORM\OneToOne(targetEntity=RegisterRequest::class, mappedBy="user", cascade={"persist", "remove"})
-     */
-    private $registerRequest;
-
-    /**
      * @ORM\Column(type="string", length=510, nullable=true)
      */
     private $profilePicture;
@@ -163,23 +158,6 @@ class User implements UserInterface
     public function getRoles()
     {
         return array('ROLE_USER');
-    }
-
-    public function getRegisterRequest(): ?RegisterRequest
-    {
-        return $this->registerRequest;
-    }
-
-    public function setRegisterRequest(RegisterRequest $registerRequest): self
-    {
-        // set the owning side of the relation if necessary
-        if ($registerRequest->getUser() !== $this) {
-            $registerRequest->setUser($this);
-        }
-
-        $this->registerRequest = $registerRequest;
-
-        return $this;
     }
 
     public function getProfilePicture(): ?string

@@ -8,6 +8,7 @@ use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,12 +26,7 @@ class CommentController extends AbstractController
      */
     public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
     {
-        $comments = $commentRepo->findBy(
-            ['figure' => $figure],
-            ['creationDate' => 'DESC'],
-            $this->getParameter('figure_comment_step'),
-            $start
-        );
+        $comments = $commentRepo->findPaginatedFromFigure($figure,$start);
         return $this->render(
             "snowtricks/loadMoreComments.html.twig",
             ['comments' => $comments]
@@ -44,12 +40,13 @@ class CommentController extends AbstractController
      * @param Request $request
      * @param UserRepository $userRepo
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
-    public function addComment(ObjectManager $manager, Figure $figure, Request $request, UserRepository $userRepo): Response
+    public function addComment(ObjectManager $manager, Figure $figure, Request $request): Response
     {
         $comment = new Comment();
         $comment->setContent($request->request->get('content'));
-        $comment->setAuthor($userRepo->findOneBy(['pseudo' => $request->request->get('author')]));
+        $comment->setAuthor($this->getUser());
         $figure->addComment($comment);
         $manager->persist($figure);
         $manager->flush();

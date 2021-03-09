@@ -8,6 +8,7 @@ use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -16,19 +17,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FigureType extends AbstractType
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('name')
             ->add('description')
-            ->add('category', ChoiceType::class, [
-                "choices" => $options['entityManager']->findAll(),
-                'choice_value' => 'name',
-                'choice_label' => function(?Category $category) {
-                    return $category ? strtoupper($category->getName()) : '';
-                },
-                'choice_attr' => function(?Category $category) {
-                    return $category ? ['class' => 'category_'.strtolower($category->getName())] : [];
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'query_builder' => function(CategoryRepository $categoryRepository){
+                    return $categoryRepository->findAllOrderByNameQB();
                 }
             ])
             ->add('videos', CollectionType::class, [
@@ -54,8 +52,7 @@ class FigureType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Figure::class,
-            'entityManager' => null,
+            'data_class' => Figure::class
         ]);
     }
 }
