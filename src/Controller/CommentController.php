@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
     /**
-     * @Route("/figure/{id}-{slug}/{start}", name="loadMoreComments")
+     * @Route("/figure/{id}-{slug}/moreComments/{start}", name="loadMoreComments")
      * @param Figure $figure
      * @param CommentRepository $commentRepo
      * @param int $start
@@ -25,32 +25,31 @@ class CommentController extends AbstractController
      */
     public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
     {
-        $comments = $commentRepo->findBy(['figure' => $figure]);
-        return $this->render("snowtricks/loadMoreComments.html.twig",
-            [
-                'comments' => $comments,
-                [
-                    'creationDate' => 'DESC'
-                ],
-                $this->getParameter('figure_comment_step'),
-                $start
-            ]
+        $comments = $commentRepo->findBy(
+            ['figure' => $figure],
+            ['creationDate' => 'DESC'],
+            $this->getParameter('figure_comment_step'),
+            $start
+        );
+        return $this->render(
+            "snowtricks/loadMoreComments.html.twig",
+            ['comments' => $comments]
         );
     }
 
     /**
      * @Route("/figure/{id}-{slug}/comment/add", name="comment_add")
-     * @ParamConverter("figure", options={"id" = "id"})
      * @param ObjectManager $manager
      * @param Figure $figure
-     * @param Request $reque
+     * @param Request $request
+     * @param UserRepository $userRepo
      * @return Response
      */
-    public function addComment(ObjectManager $manager, Figure $figure, Request $request): Response
+    public function addComment(ObjectManager $manager, Figure $figure, Request $request, UserRepository $userRepo): Response
     {
-        dd($figure);
         $comment = new Comment();
         $comment->setContent($request->request->get('content'));
+        $comment->setAuthor($userRepo->findOneBy(['pseudo' => $request->request->get('author')]));
         $figure->addComment($comment);
         $manager->persist($figure);
         $manager->flush();

@@ -96,7 +96,14 @@
         <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     {% endblock %}
-<button onclick="loadMoreCommentsfdp()">bite</button>
+
+    <div class="row mx-auto">
+        <div class="col-md-10 col-12 mx-auto row">
+            <input type="text" id="newCommentText" class="col-lg-10 col-8" required="required" maxlength="255" class="form-control">
+            <button onclick="loadMoreCommentsfdp()" class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
+        </div>
+    </div>
+
     <!-- The Modal/Lightbox -->
     <div id="imageModal" class="modal rounded mx-auto">
         <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
@@ -124,7 +131,8 @@
                 type: "POST",
                 url: '{{ path('comment_add', {'id': figure.id, 'slug': figure.slug}) }}',
                 data: {
-                    'content': 'fdp'
+                    'content': $('#newCommentText').val(),
+                    'author': 'user1'
                 },
                 success: function(data, status){
                     console.log(data);
@@ -133,9 +141,16 @@
         }
 
         function loadMoreComments(){
-            $.get( $(location).attr("href")+"/"+($("#comments > div").length), function( data ) {
-                $('#comments').append(data);
-            });
+            $.get(`
+                {{ path('loadMoreComments', {
+                    'id' : figure.id,
+                    'slug' : figure.slug,
+                    'start' : 'startindex'
+                }) }}`.replace('startindex', ($("#comments > div").length)),
+                function( data ) {
+                    $('#comments').append(data);
+                }
+            );
         }
         const $videosCollectionHolder = $('#videosCollectionHolder');
         for (const $elt of $videosCollectionHolder.find('iframe')){

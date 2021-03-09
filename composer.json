@@ -32,7 +32,8 @@
         "symfony/validator": "5.2.*",
         "symfony/var-dumper": "5.2.*",
         "symfony/yaml": "5.2.*",
-        "symfonycasts/verify-email-bundle": "^1.1"
+        "symfonycasts/verify-email-bundle": "^1.1",
+      "ext-openssl": "*"
     },
     "config": {
         "optimize-autoloader": true,
