@@ -1,21 +1,50 @@
-{% extends "base.html.twig" %}
-{% block body %}
-    <div class="bg-gradient-success" style="width: 100%; height: 100%"></div>
-    <div class="row">
+{% extends 'base.html.twig' %}
 
-    {% for figure in figures %}
-        <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2">
-            <a href="{{ path('figure_show', {'id': figure.id}) }}">
-                <div class="card">
-                    <img class="card-img-top" src="{{ figure.pictures[0].url }}" alt="Card image cap">
-                    <div class="card-title d-flex">
-                        <div class="mr-auto p-2">{{ figure.name }}</div>
-                            <div class="p-2"><i class="fas fa-edit"></i></div>
-                            <div class="p-2"><i class="fas fa-edit"></i></div>
+{% block title %}SnowTricks - Accueil{% endblock %}
+
+{% block body %}
+
+    <!-- Figures listing -->
+    <section id="figures" class="position-relative">
+        <div class="category-menu text-center">
+            <button type="button" class="btn btn-primary">Grabs</button>
+            <button type="button" class="btn btn-secondary">Rotations</button>
+        </div>
+        <div class="row" id="figuresList">
+            {% for figure in figures %}
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card">
+                        <a href="{{ path('figure_show', {'id' : figure.id, 'slug': figure.slug}) }}">
+                            <img src="{{ asset(figure.pictures|first.url) }}" class="card-img-top">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">
+                                    {{ figure.name }}
+                                    {% if app.user %}
+                                        <div class="float-right">
+                                            <a href="{{ path('figure_edit', {'id' : figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
+                                            <a href="{{ path('figure_delete', {'id' : figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+                                            </div>
+                                    {% endif %}
+                                </h5>
+                            </div>
+                        </a>
                     </div>
                 </div>
-            </a>
+            {% endfor %}
         </div>
-    {% endfor %}
-    </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <button id="loadMoreFigures" onclick="loadMoreFigures()" class="btn btn-primary">Voir plus de figures</button>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block scripts %}
+    <script>
+        function loadMoreFigures(){
+            $.get( $("#figuresList > div").length, function( data ) {
+                $('#figuresList').append(data);
+            });
+        }
+    </script>
 {% endblock %}

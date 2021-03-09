@@ -1,0 +1,41 @@
+{% extends "base.html.twig" %}
+{% form_theme form with [
+    'figure/video.html.twig',
+    'figure/picture.html.twig',
+    'figure/figure.html.twig'
+    ] %}
+
+{% block body %}
+    <h1 class="text-center">Edition du trick : {{ form.vars.value.name}} </h1>
+        {{ form_start(form) }}
+        {{ form_row(form.name) }}
+    <div class="operations">
+    {# <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+    #}
+    </div>
+    <div id="figureMedias">
+        <div class="row" id="picturesCollectionHolder"
+             data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
+            {{ form_row(form.pictures) }}
+        </div>
+        <div class="row" id="videosCollectionHolder" data-prototype="{{ form_widget(form.videos.vars.prototype)|e('html_attr') }}">
+            {{ form_row(form.videos) }}
+        </div>
+    </div>
+
+    {{ form_widget(form.description) }}
+    <p class="col">Catégorie : {{ form_widget(form.category) }}</p>
+    <button class="btn btn-success" type="submit">Valider</button>
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/figureEdition.js') }}"></script>
+    <script src="{{ asset('js/figure.js') }}"></script>
+{% endblock %}
+{% block externalCSS %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/video.css") }}">
+    <link rel="stylesheet" href="{{ asset("css/figure.css") }}">
+{% endblock %}

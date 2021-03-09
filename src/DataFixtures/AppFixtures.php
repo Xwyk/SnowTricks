@@ -19,58 +19,40 @@ class AppFixtures extends Fixture
 
         // Create fake users
         $users = array();
-        for ($i=0; $i<=random_int(6, 12); $i++){
-            $users[$i] = new User();
-            $users[$i]->setPseudo($faker->firstNameMale)
-                      ->setMailAddress($faker->freeEmail)
-                      ->setPassword(password_hash($faker->password, PASSWORD_BCRYPT ))
-                      ->setCreationDate($faker->dateTimeBetween("-30 days"));
-            $manager->persist($users[$i]);
+        for ($i = 1; $i <= 4; $i++){
+            $users['user'.$i] = (new User())->setPseudo('user'.$i)
+                ->setPassword((password_hash('user'.$i, PASSWORD_BCRYPT )))
+                ->setIsVerified(true)
+                ->setMailAddress('user'.$i.'@snowtricks.fr')
+                ->setCreationDate($faker->dateTimeBetween("-90 days", "-31 days"));
+            $manager->persist($users['user'.$i]);
         }
 
         // Create fake categories
         $categories = array();
-        for ($i=0; $i<=random_int(3, 8); $i++) {
-            $categories[$i] = new Category();
-            $categories[$i]->setName(join($faker->words, ' '));
+        $names      = array("Les grabs", "Les rotations", "Les flips", "Les rotations désaxées", "Les slides", "Les one foot tricks"," Old school");
+        for ($i=0; $i < count($names); $i++) {
+            $categories[$names[$i]] = new Category();
+            $categories[$names[$i]]->setName($names[$i]);
+            $manager->persist($categories[$names[$i]]);
         }
+        $figure = new Figure();
+        $figure->setName("Seatbelt")
+            ->setDescription("")
+            ->setCreationDate($faker->dateTimeBetween("-30 days"))
+            ->setCategory($categories["Les grabs"])
+            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
+            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
+            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
+            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
+            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
+            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
+            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
+                ->setAuthor($users[array_rand($users)])
+                ->setContent("Excellent")
+            );
+        $manager->persist($figure);
 
-
-        foreach ($categories as $category){
-            // Create figure in category
-            for ($i = 0; $i < random_int(3, 5); $i++){
-                $figure = new Figure();
-                $figure->setName(join($faker->words, ' '))
-                       ->setDescription(join($faker->paragraphs, ' '))
-                       ->setCreationDate($faker->dateTimeBetween("-30 days"))
-                       ->setCategory($category);
-                // Adding medias to figure (pictures)
-                for ($a=0; $a < rand(3, 6); $a++){
-                    $picture = new Picture();
-                    $picture->setUrl($faker->imageUrl())
-                          ->setFigure($figure);
-                    $manager->persist($picture);
-                }
-                // Adding medias to figure (videos)
-                for ($a=0; $a < rand(3, 6); $a++){
-                    $video = new Video();
-                    $video->setUrl($faker->imageUrl())
-                          ->setFigure($figure);
-                    $manager->persist($video);
-                }
-                // Adding comments to figure
-                for ($j = 0; $j < rand(5,10); $j++){
-                    $comment = new Comment();
-                    $comment->setAuthor($users[array_rand($users)])
-                            ->setFigure($figure)
-                            ->setCreationDate($faker->dateTimeBetween('-'.$figure->getCreationDate()->diff(new \DateTime())->days.' days'))
-                            ->setContent(join($faker->paragraphs, ' '));
-                    $manager->persist($comment);
-                }
-                $manager->persist($figure);
-            }
-            $manager->persist($category);
-        }
         $manager->flush();
     }
 }

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -50,7 +51,7 @@ class Figure
     private $modificationDate;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="figure", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="figure", orphanRemoval=true ,cascade={"persist"})
      */
     private $comments;
 
@@ -60,17 +61,18 @@ class Figure
     private $category;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="figure", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="figure", orphanRemoval=true, cascade={"persist"})
      */
     private $pictures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Video::class, mappedBy="figure", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Video::class, mappedBy="figure", orphanRemoval=true, cascade={"persist"})
      */
     private $videos;
 
     public function __construct()
     {
+        $this->creationDate = new \DateTime();
         $this->comments = new ArrayCollection();
         $this->pictures = new ArrayCollection();
         $this->videos = new ArrayCollection();
@@ -229,5 +231,10 @@ class Figure
         }
 
         return $this;
+    }
+
+    public function getSlug(){
+        $slugger = new AsciiSlugger();
+        return $slugger->slug($this->getName());
     }
 }

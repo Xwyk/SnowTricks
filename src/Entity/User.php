@@ -74,6 +74,7 @@ class User implements UserInterface
     {
         $this->figures = new ArrayCollection();
         $this->comments = new ArrayCollection();
+        $this->creationDate = new \DateTime();
     }
 
     public function getId(): ?int
