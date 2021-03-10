@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Entity\Figure;
 use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
+use App\Service\DBQueries;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -20,13 +21,13 @@ class CommentController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}/moreComments/{start}", name="loadMoreComments")
      * @param Figure $figure
-     * @param CommentRepository $commentRepo
+     * @param DBQueries $DBQueries
      * @param int $start
      * @return Response
      */
-    public function loadMoreComments(Figure $figure, CommentRepository $commentRepo, int $start): Response
+    public function loadMoreComments(Figure $figure, DBQueries $DBQueries, int $start): Response
     {
-        $comments = $commentRepo->findPaginatedFromFigure($figure,$start);
+        $comments = $DBQueries->getNextCommmentsForFigure($figure,$start);
         return $this->render(
             "snowtricks/loadMoreComments.html.twig",
             ['comments' => $comments]
@@ -38,7 +39,6 @@ class CommentController extends AbstractController
      * @param ObjectManager $manager
      * @param Figure $figure
      * @param Request $request
-     * @param UserRepository $userRepo
      * @return Response
      * @IsGranted("ROLE_USER")
      */

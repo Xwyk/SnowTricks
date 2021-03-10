@@ -11,6 +11,7 @@ use App\Entity\Video;
 use App\Form\FigureType;
 use App\Repository\CategoryRepository;
 use App\Repository\FigureRepository;
+use App\Service\DBQueries;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,12 +22,12 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home")
-     * @param FigureRepository $repository
+     * @param DBQueries $DBQueries
      * @return Response
      */
-    public function home(FigureRepository $repository): Response
+    public function home(DBQueries $DBQueries): Response
     {
-        $figures = $repository->findBy([], ['creationDate' => 'DESC'], 12, 0);
+        $figures = $DBQueries->getLastFigures();
         return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
     }
 
@@ -34,11 +35,14 @@ class HomeController extends AbstractController
      * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
      *
      * @Route("/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
+     * @param DBQueries $DBQueries
+     * @param int $start
+     * @return Response
      */
-    public function loadMoreFigures(FigureRepository $repo, $start)
+    public function loadMoreFigures(DBQueries $DBQueries, int $start)
     {
         // Get 15 tricks from the start position
-        $figures = $repo->findBy([], ['creationDate' => 'DESC'], 12, $start);
+        $figures = $DBQueries->getNextFigures($start);
 
         return $this->render('snowtricks/loadMoreFigures.html.twig', [
             'figures' => $figures

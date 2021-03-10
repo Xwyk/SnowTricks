@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Form\RegistrationFormType;
 use App\Repository\RegisterTokenRepository;
 use App\Security\EmailVerifier;
+use App\Service\ApplicationMailer;
 use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -29,17 +30,16 @@ class RegistrationController extends AbstractController
      * @param Request $request
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param ObjectManager $manager
+     * @param ApplicationMailer $appMailer
      * @return Response
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, ObjectManager $manager, MailerInterface $mailer): Response
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, ObjectManager $manager, ApplicationMailer $appMailer): Response
     {
-        $token = new RegisterToken();
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $user->setPassword(
                 $passwordEncoder->encodePassword(
                     $user,
@@ -50,24 +50,17 @@ class RegistrationController extends AbstractController
             $token = new RegisterToken();
             $token->setUser($user);
 
-            $email = (new Email())
-                ->from('hello@example.com')
-                ->to($user->getMailAddress())
-                ->subject('Validez votre inscription')
-                ->text('Validez votre inscription')
-                ->html($this->renderView('registration/confirmation_email.html.twig', [
+            $appMailer->sendConfirmationMailTo(
+                $user,
+                $this->renderView('registration/confirmation_email.html.twig', [
                     'token' => $token
-                ]));
-
-            $mailer->send($email);
+                ])
+            );
 
             $manager->persist($token);
 
             $manager->persist($user);
             $manager->flush();
-
-
-            // do anything else you need here, like send an email
 
             return $this->redirectToRoute('home');
         }

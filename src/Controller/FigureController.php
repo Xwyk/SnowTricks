@@ -13,6 +13,8 @@ use App\Form\FigureType;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
 use App\Repository\FigureRepository;
+use App\Service\DBQueries;
+use App\Service\FileUploader;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,26 +30,19 @@ class FigureController extends AbstractController
      * @Route("/figure/add", name="figure_add")
      * @param Request $request
      * @param ObjectManager $manager
-     * @param CategoryRepository $catRepo
+     * @param FileUploader $fileUploader
      * @return Response
      */
-    public function add(Request $request, ObjectManager $manager, SluggerInterface $slugger): Response
+    public function add(Request $request, ObjectManager $manager, FileUploader $fileUploader): Response
     {
         $figure = new Figure();
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // For each picture form in form['pictures'], get uploaded image file,
-            // copy it to public folder and set url attribute value
-            foreach ($form->get('pictures')->getData() as $picture) {
-                $pictureToUpload = $picture->getImage();
-                if ($pictureToUpload) {
-                    $picture->setUrl($this->uploadPicture($pictureToUpload, $slugger));
-                }
-            }
-            // Create figure from form
+            $fileUploader->uploadPictures($form->get('pictures')->getData());
+
             $figure = $form->getData();
-            // Persist element in database
+
             $manager->persist($figure);
             $manager->flush();
 
@@ -62,11 +57,10 @@ class FigureController extends AbstractController
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
-     * @param CategoryRepository $catRepo
-     * @param SluggerInterface $slugger
+     * @param FileUploader $fileUploader
      * @return Response
      */
-    public function edit(Request $request, ObjectManager $manager, Figure $figure, CategoryRepository $catRepo, SluggerInterface $slugger): Response
+    public function edit(Request $request, ObjectManager $manager, Figure $figure, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
@@ -76,7 +70,7 @@ class FigureController extends AbstractController
             foreach ($form->get('pictures')->getData() as $picture) {
                 $pictureToUpload = $picture->getImage();
                 if ($pictureToUpload) {
-                    $picture->setUrl($this->uploadPicture($pictureToUpload, $slugger));
+                    $picture->setUrl($fileUploader->uploadPicture($pictureToUpload));
                 }
             }
             $manager->persist($figure);
@@ -101,43 +95,16 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}", name="figure_show")
      * @param Figure $figure
-     * @param CommentRepository $commentRepo
+     * @param DBQueries $DBQueries
      * @return Response
      */
-    public function showOne(Figure $figure, CommentRepository $commentRepo): Response
+    public function showOne(Figure $figure, DBQueries $DBQueries): Response
     {
-
-
         return $this->render("snowtricks/figure.html.twig", [
             "figure" => $figure,
-            'comments' => $commentRepo->findBy(['figure' => $figure],
-            [
-                'creationDate' => 'DESC'
-            ],
-            5,
-            0
-            )
+            'comments' => $DBQueries->getLastCommentsForFigure($figure)
         ]);
     }
 
-    protected function uploadPicture(File $pictureToUpload, SluggerInterface $slugger){
-            $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
-            // slug filename to keep original name as part of the final name,
-            // and add an uuid to name
-            $safeFilename = $slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
 
-            // Move to picture directory
-            try {
-                $pictureToUpload->move(
-                    $this->getParameter('root_public_directory').
-                    $this->getParameter('pictures_directory'),
-                    $newFilename
-                );
-            } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
-            }
-            // Set url attribute of picture element
-            return $this->getParameter('pictures_directory').$newFilename;
-    }
 }
