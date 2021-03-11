@@ -27,6 +27,11 @@ class HomeController extends AbstractController
      */
     public function home(DBQueries $DBQueries): Response
     {
+        $this->addFlash('info','Ceci est une info');
+        $this->addFlash('success','Ceci est une validation');
+        $this->addFlash('danger','Ceci est une erreur');
+        $this->addFlash('warning','Ceci est un avertissement');
+
         $figures = $DBQueries->getLastFigures();
         return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
     }
@@ -34,7 +39,7 @@ class HomeController extends AbstractController
     /**
      * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
      *
-     * @Route("/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
+     * @Route("/loadMoreFigures/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
      * @param DBQueries $DBQueries
      * @param int $start
      * @return Response
@@ -43,7 +48,9 @@ class HomeController extends AbstractController
     {
         // Get 15 tricks from the start position
         $figures = $DBQueries->getNextFigures($start);
-
+        if (empty($figures)){
+            $this->addFlash('info','Toutes les figures sont chargées');
+        }
         return $this->render('snowtricks/loadMoreFigures.html.twig', [
             'figures' => $figures
         ]);

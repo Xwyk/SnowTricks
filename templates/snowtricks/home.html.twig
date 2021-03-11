@@ -3,7 +3,6 @@
 {% block title %}SnowTricks - Accueil{% endblock %}
 
 {% block body %}
-
     <!-- Figures listing -->
     <section id="figures" class="position-relative">
         <div class="category-menu text-center">
@@ -42,8 +41,12 @@
 {% block scripts %}
     <script>
         function loadMoreFigures(){
-            $.get( $("#figuresList > div").length, function( data ) {
+            $.get( `{{ path('loadMoreFigures', {
+                'start' : 0
+            }) }}`.replace(0, ($("#figuresList > div").length))
+            , function( data ) {
                 $('#figuresList').append(data);
+                showAlerts();
             });
         }
     </script>

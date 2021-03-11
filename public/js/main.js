@@ -6,4 +6,14 @@ jQuery(document).ready(function () {
             $( this ).attr( "src", "/img/default.jpg" );
         }
     });
+    showAlerts();
 });
+function showAlerts(){
+    $('.alert').hide().removeClass('d-none');
+    $('.alert').slideDown(1000)
+    setTimeout(()=>{
+        $('.alert').slideUp(1000, ()=>{
+            $('.alert').remove();
+        });
+    }, 5000);
+}
