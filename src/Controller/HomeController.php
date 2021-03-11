@@ -33,7 +33,7 @@ class HomeController extends AbstractController
         $this->addFlash('warning','Ceci est un avertissement');
 
         $figures = $DBQueries->getLastFigures();
-        return $this->render("snowtricks/home.html.twig", ["figures" => $figures]);
+        return $this->render("home/home.html.twig", ["figures" => $figures]);
     }
 
     /**
@@ -51,7 +51,7 @@ class HomeController extends AbstractController
         if (empty($figures)){
             $this->addFlash('info','Toutes les figures sont chargées');
         }
-        return $this->render('snowtricks/loadMoreFigures.html.twig', [
+        return $this->render('home/loadMoreFigures.html.twig', [
             'figures' => $figures
         ]);
     }

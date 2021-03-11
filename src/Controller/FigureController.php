@@ -49,7 +49,7 @@ class FigureController extends AbstractController
 
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
-        return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("figure/addFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
@@ -77,7 +77,7 @@ class FigureController extends AbstractController
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
-        return $this->render("snowtricks/editFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("figure/editFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
@@ -100,7 +100,7 @@ class FigureController extends AbstractController
      */
     public function showOne(Figure $figure, DBQueries $DBQueries): Response
     {
-        return $this->render("snowtricks/figure.html.twig", [
+        return $this->render("figure/figure.html.twig", [
             "figure" => $figure,
             'comments' => $DBQueries->getLastCommentsForFigure($figure)
         ]);

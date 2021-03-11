@@ -29,7 +29,7 @@ class CommentController extends AbstractController
     {
         $comments = $DBQueries->getNextCommmentsForFigure($figure,$start);
         return $this->render(
-            "snowtricks/loadMoreComments.html.twig",
+            "comment/loadMoreComments.html.twig",
             ['comments' => $comments]
         );
     }
@@ -50,6 +50,6 @@ class CommentController extends AbstractController
         $figure->addComment($comment);
         $manager->persist($figure);
         $manager->flush();
-        return $this->render("snowtricks/oneMoreComment.html.twig", ['comment' => $comment]);
+        return $this->render("comment/oneMoreComment.html.twig", ['comment' => $comment]);
     }
 }
