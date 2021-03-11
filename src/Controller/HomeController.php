@@ -13,6 +13,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\FigureRepository;
 use App\Service\DBQueries;
 use Doctrine\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,21 +34,27 @@ class HomeController extends AbstractController
         $this->addFlash('warning','Ceci est un avertissement');
 
         $figures = $DBQueries->getLastFigures();
-        return $this->render("home/home.html.twig", ["figures" => $figures]);
+        $categories = $DBQueries->getCategories();
+        return $this->render("home/home.html.twig", [
+            "figures" => $figures,
+            "categories" => $categories
+        ]);
     }
 
     /**
      * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
      *
-     * @Route("/loadMoreFigures/{start}", name="loadMoreFigures", requirements={"start": "\d+"})
+     * @Route("/loadMoreFigures/{category}/{start}", name="loadMoreFigures", requirements={"start": "\d+"}, defaults={"category"=0})
+     * @ParamConverter("Category", options={"mapping": {"id": "categoru"}})
      * @param DBQueries $DBQueries
      * @param int $start
+     * @param Category|null $category
      * @return Response
      */
-    public function loadMoreFigures(DBQueries $DBQueries, int $start)
+    public function loadMoreFigures(DBQueries $DBQueries, int $start, Category $category = null)
     {
         // Get 15 tricks from the start position
-        $figures = $DBQueries->getNextFigures($start);
+        $figures = $DBQueries->getNextFigures($start, $category);
         if (empty($figures)){
             $this->addFlash('info','Toutes les figures sont chargées');
         }

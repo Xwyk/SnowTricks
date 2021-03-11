@@ -16,13 +16,17 @@
 <body>
     {% include 'shared/header.html.twig' %}
     <div class="container py-5 mt-5">
-        {% for label, messages in app.flashes(['success', 'warning', 'info', 'danger']) %}
+        <div class="position-relative">
+            <div id="alertsHolder" class="position-absolute top-0 end-0" style="z-index: 3000">
+            {% for label, messages in app.flashes(['success', 'warning', 'info', 'danger']) %}
             {% for message in messages %}
                 <div class="alert alert-{{ label }} d-none">
                     {{ message }}
                 </div>
             {% endfor %}
         {% endfor %}
+        </div>
+    </div>
         {% block body %}{% endblock %}
     </div>
     {% include 'shared/footer.html.twig' %}

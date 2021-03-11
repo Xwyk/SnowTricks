@@ -4,10 +4,12 @@
 
 {% block body %}
     <!-- Figures listing -->
+
     <section id="figures" class="position-relative">
         <div class="category-menu text-center">
-            <button type="button" class="btn btn-primary">Grabs</button>
-            <button type="button" class="btn btn-secondary">Rotations</button>
+            {% for category in categories %}
+                <button type="button" class="btn btn-primary" value="{{ category.id }}">{{ category.name }}</button>
+            {% endfor %}
         </div>
         <div class="row" id="figuresList">
             {% for figure in figures %}
@@ -42,6 +44,7 @@
     <script>
         function loadMoreFigures(){
             $.get( `{{ path('loadMoreFigures', {
+                'category' : 38,
                 'start' : 0
             }) }}`.replace(0, ($("#figuresList > div").length))
             , function( data ) {
