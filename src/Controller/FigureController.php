@@ -27,7 +27,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class FigureController extends AbstractController
 {
     /**
-     * @Route("/figure/add", name="figure_add")
+     * @Route("/figure/add", name="figure_add", methods={"GET"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param FileUploader $fileUploader
@@ -53,7 +53,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/edit", name="figure_edit")
+     * @Route("/figure/{id}-{slug}/edit", name="figure_edit", methods={"GET"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
@@ -81,7 +81,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/delete", name="figure_delete")
+     * @Route("/figure/{id}-{slug}/delete", name="figure_delete", methods={"GET"})
      * @param ObjectManager $manager
      * @param Figure $figure
      * @return Response
@@ -93,7 +93,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}", name="figure_show")
+     * @Route("/figure/{id}-{slug}", name="figure_show", methods={"GET"})
      * @param Figure $figure
      * @param DBQueries $DBQueries
      * @return Response

@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class HomeController extends AbstractController
 {
     /**
-     * @Route("/", name="home")
+     * @Route("/", name="home", methods={"GET"})
      * @param DBQueries $DBQueries
      * @return Response
      */
@@ -44,7 +44,7 @@ class HomeController extends AbstractController
     /**
      * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
      *
-     * @Route("/loadMoreFigures/{category}/{start}", name="loadMoreFigures", requirements={"start": "\d+"}, defaults={"category"=0})
+     * @Route("/loadMoreFigures/{category}/{start}", name="loadMoreFigures", requirements={"start": "\d+"}, defaults={"category"=0}, methods={"GET"})
      * @ParamConverter("Category", options={"mapping": {"id": "categoru"}})
      * @param DBQueries $DBQueries
      * @param int $start

@@ -19,7 +19,7 @@ class RegistrationController extends AbstractController
 
 
     /**
-     * @Route("/register", name="app_register")
+     * @Route("/register", name="app_register", methods={"GET"})
      * @param Request $request
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param ObjectManager $manager
@@ -43,12 +43,7 @@ class RegistrationController extends AbstractController
             $token = new RegisterToken();
             $token->setUser($user);
 
-//            $appMailer->sendConfirmationMailTo(
-//                $user,
-//                $this->renderView('registration/confirmation_email.html.twig', [
-//                    'token' => $token
-//                ])
-//            );
+            $appMailer->sendConfirmationMail($token);
 
             $manager->persist($token);
             $manager->persist($user);
@@ -64,7 +59,7 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/verify/{token}", name="app_verify_email")
+     * @Route("/verify/{token}", name="app_verify_email", methods={"GET"})
      * @ParamConverter("RegisterToken", options={"mapping": {"token": "token"}})
      * @param ObjectManager $manager
      * @param RegisterToken $registerToken
