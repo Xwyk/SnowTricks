@@ -1,10 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}SnowTricks - Accueil{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
+{% endblock %}
+    {% block mainImage %}
+        <div class="bg"></div>
+    {% endblock %}
 
 {% block body %}
-    <!-- Figures listing -->
 
+    <!-- Figures listing -->
     <section id="figures" class="position-relative">
         <div class="category-menu text-center">
             {% for category in categories %}

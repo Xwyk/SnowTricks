@@ -17,6 +17,7 @@ use App\Service\DBQueries;
 use App\Service\FileUploader;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,6 +33,7 @@ class FigureController extends AbstractController
      * @param ObjectManager $manager
      * @param FileUploader $fileUploader
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function add(Request $request, ObjectManager $manager, FileUploader $fileUploader): Response
     {
@@ -59,14 +61,13 @@ class FigureController extends AbstractController
      * @param Figure $figure
      * @param FileUploader $fileUploader
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function edit(Request $request, ObjectManager $manager, Figure $figure, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // For each picture form in form['pictures'], get uploaded image file,
-            // copy it to public folder and set url attribute value
             foreach ($form->get('pictures')->getData() as $picture) {
                 $pictureToUpload = $picture->getImage();
                 if ($pictureToUpload) {
@@ -85,6 +86,7 @@ class FigureController extends AbstractController
      * @param ObjectManager $manager
      * @param Figure $figure
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function delete(ObjectManager $manager, Figure $figure): Response
     {

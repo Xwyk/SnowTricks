@@ -11,7 +11,7 @@
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
         {% endblock %}
     </div>
-    <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+    <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         {% block figureTitle %}
             <div id="figureName" class="text-center">
                 <h1>{{ figure.name }}</h1>
@@ -27,7 +27,7 @@
         {% endblock %}
     </div>
     <hr>
-    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light">
+    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         <h2>Médias</h2>
 
             {% block pictures %}
@@ -55,7 +55,7 @@
             {% endblock %}
     </div>
 
-    <div class="row">
+    <div class="row fadeOnModal">
         <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
             {% block description %}
 
@@ -96,18 +96,28 @@
         <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     {% endblock %}
-
+    {% if app.user %}
     <div class="row mx-auto">
         <div class="col-md-10 col-12 mx-auto row">
             <input type="text" id="newCommentText" class="col-lg-10 col-8" required="required" maxlength="255" class="form-control">
-            <button onclick="loadMoreCommentsfdp()" class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
+            <button onclick="addcomment()" class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
         </div>
     </div>
+    {% endif %}
 
     <!-- The Modal/Lightbox -->
-    <div id="imageModal" class="modal rounded mx-auto">
-        <span class="close cursor"><i class="fas fa-times fa-2x"></i></span>
-        <img src="#" alt="">
+
+    <div class="modal" id="imageModal">
+            <div class="modal-content w-auto">
+                <div class="modal-header">
+                    <button type="button" class="close cursor" data-dismiss="modal" aria-label="Close">
+                        <span class=""><i class="fas fa-times fa-2x"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img class="img-fluid" src="#" alt="">
+                </div>
+            </div>
     </div>
 {% endblock %}
 {% block scripts %}
@@ -115,7 +125,7 @@
     <script src="{{ asset('js/figure.js') }}"></script>
 
     <script>
-        $(".figurePicture img").click(function() {
+        $("#picturesCollectionHolder img").click(function() {
             $(".fadeOnModal").fadeTo("slow" , 0.5);
             $(".modal img").attr("src", this.src);
             $("#imageModal").show();
@@ -125,20 +135,20 @@
             $(".fadeOnModal").fadeTo("slow" , 1);
             $("#imageModal").hide();
         });
-
-        function loadMoreCommentsfdp(){
+        {% if app.user %}
+        function addcomment(){
             $.ajax({
                 type: "POST",
                 url: '{{ path('comment_add', {'id': figure.id, 'slug': figure.slug}) }}',
                 data: {
-                    'content': $('#newCommentText').val(),
-                    'author': 'user1'
+                    'content': $('#newCommentText').val()
                 },
                 success: function(data, status){
                     console.log(data);
                 }
             });
         }
+        {% endif %}
 
         function loadMoreComments(){
             $.get(`
@@ -156,7 +166,5 @@
         for (const $elt of $videosCollectionHolder.find('iframe')){
             $($elt).attr('src', urlToEmbed($($elt).attr('src')));
         }
-
-
     </script>
 {% endblock %}
