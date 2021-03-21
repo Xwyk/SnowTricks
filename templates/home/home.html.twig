@@ -6,18 +6,25 @@
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
 {% endblock %}
     {% block mainImage %}
-        <div class="bg"></div>
+        {{ parent() }}
+        <div class="bg">
+            <div class="d-flex justify-content-center h-100">
+                <div class="d-flex align-items-center">
+                    <h1 class="bg-white">SnowTricks</h1>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end position-absolute fixed-bottom">
+                <div class="d-flex align-items-end">
+                    <a href="#figures" class="text-dark"><i class="fas fa-3x fa-arrow-down px-5 py-5"></i></a>
+                </div>
+            </div>
+        </div>
     {% endblock %}
 
 {% block body %}
-
     <!-- Figures listing -->
     <section id="figures" class="position-relative">
-        <div class="category-menu text-center">
-            {% for category in categories %}
-                <button type="button" class="btn btn-primary" value="{{ category.id }}">{{ category.name }}</button>
-            {% endfor %}
-        </div>
+        <h2 class="text-center">Liste de figures</h2>
         <div class="row" id="figuresList">
             {% for figure in figures %}
                 <div class="col-lg-3 col-md-4 col-sm-6">

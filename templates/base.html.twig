@@ -15,19 +15,24 @@
 </head>
 <body>
     {% include 'shared/header.html.twig' %}
-    {% block mainImage %}{% endblock %}
-    <div class="container py-5 mt-5">
-        <div class="position-relative">
-            <div id="alertsHolder" class="position-absolute top-0 end-0" style="z-index: 3000">
-            {% for label, messages in app.flashes(['success', 'warning', 'info', 'danger']) %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }} d-none">
-                    {{ message }}
+
+    {% block mainImage %}
+        <div class="container">
+            <div class="position-relative">
+                <div id="alertsHolder" class="position-absolute top-0 end-0 py-5 mt-5" style="z-index: 3000">
+                    {% for label, messages in app.flashes(['success', 'warning', 'info', 'danger']) %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ label }} d-none">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        {% endfor %}
+            </div>
         </div>
-    </div>
+    {% endblock %}
+    <div class="container py-5 mt-5">
+
         {% block body %}{% endblock %}
     </div>
     {% include 'shared/footer.html.twig' %}
