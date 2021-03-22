@@ -13,6 +13,14 @@ class FileUploader{
     protected $params;
     protected $pictures_directory;
     protected $root_public_directory;
+
+    /**
+     * FileUploader constructor.
+     * @param SluggerInterface $slugger
+     * @param ParameterBagInterface $params
+     * @param string $root_public_directory
+     * @param string $pictures_directory
+     */
     public function __construct(SluggerInterface $slugger, ParameterBagInterface $params, string $root_public_directory, string $pictures_directory)
     {
         $this->params  = $params;
@@ -21,17 +29,24 @@ class FileUploader{
         $this->root_public_directory = $root_public_directory;
     }
 
-    public function uploadPictures(ArrayCollection $pictures){
+    /**
+     * @param ArrayCollection $pictures
+     */
+    public function uploadPictures(ArrayCollection &$pictures){
         foreach ($pictures as $picture){
             $pictureToUpload = $picture->getImage();
             if ($pictureToUpload) {
-                $picture->setUrl($this->upload($pictureToUpload));
+                $picture->setUrl($this->uploadPicture($pictureToUpload));
             }
         }
     }
 
 
-    public function upload(File $pictureToUpload): string{
+    /**
+     * @param File $pictureToUpload
+     * @return string
+     */
+    public function uploadPicture(File $pictureToUpload): string{
         $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
 
         $sluggedFilename = $this->slugger->slug($originalFilename);

@@ -67,7 +67,6 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->figures = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->creationDate = new \DateTime();
     }

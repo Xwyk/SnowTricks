@@ -1,3 +1,11 @@
+{% for label, messages in app.flashes(['success', 'warning', 'info', 'danger']) %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }} d-none">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+        {% block body %}{% endblock %}
 {% for figure in figures %}
     <div class="col-lg-3 col-md-4 col-sm-6">
         <div class="card">

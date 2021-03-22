@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Category;
 use App\Entity\Figure;
 use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
@@ -49,19 +50,34 @@ class DBQueries{
             ->getResult();
     }
 
-    public function getLastFigures(): iterable{
-        return $this->figureRepo->createQueryBuilder('f')
+    public function getLastFigures(Category $category = null): iterable{
+        $qb = $this->figureRepo->createQueryBuilder('f')
             ->orderBy('f.creationDate', 'DESC')
-            ->setMaxResults(self::FIGURES_LIMIT_PER_QUERY)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults(self::FIGURES_LIMIT_PER_QUERY);
+        if ($category){
+            $qb->where('f.category = :category')
+                ->setParameter('category', $category);
+        }
+        return $qb->getQuery()
+                  ->getResult();
     }
 
-    public function getNextFigures(int $start): iterable{
-        return $this->figureRepo->createQueryBuilder('f')
+    public function getNextFigures(int $start, Category $category = null): iterable{
+        $qb = $this->figureRepo->createQueryBuilder('f')
             ->orderBy('f.creationDate', 'DESC')
             ->setMaxResults(self::FIGURES_LIMIT_PER_QUERY)
-            ->setFirstResult($start)
+            ->setFirstResult($start);
+        if ($category){
+            $qb->where('f.category = :category')
+                ->setParameter('category', $category);
+        }
+        return $qb->getQuery()
+                  ->getResult();
+    }
+
+    public function getCategories(){
+        return  $this->categoryRepo->createQueryBuilder('c')
+            ->orderBy('c.name', 'DESC')
             ->getQuery()
             ->getResult();
     }

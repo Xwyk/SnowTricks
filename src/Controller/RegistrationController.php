@@ -5,28 +5,21 @@ namespace App\Controller;
 use App\Entity\RegisterToken;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
-use App\Repository\RegisterTokenRepository;
-use App\Security\EmailVerifier;
 use App\Service\ApplicationMailer;
 use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
 
 
     /**
-     * @Route("/register", name="app_register")
+     * @Route("/register", name="app_register", methods={"GET"})
      * @param Request $request
      * @param UserPasswordEncoderInterface $passwordEncoder
      * @param ObjectManager $manager
@@ -50,17 +43,12 @@ class RegistrationController extends AbstractController
             $token = new RegisterToken();
             $token->setUser($user);
 
-            $appMailer->sendConfirmationMailTo(
-                $user,
-                $this->renderView('registration/confirmation_email.html.twig', [
-                    'token' => $token
-                ])
-            );
+            $appMailer->sendConfirmationMail($token);
 
             $manager->persist($token);
-
             $manager->persist($user);
             $manager->flush();
+            $this->addFlash('info','Le compte a été créé, merci de vérifier vos mails afin valider ce dernier');
 
             return $this->redirectToRoute('home');
         }
@@ -71,19 +59,25 @@ class RegistrationController extends AbstractController
     }
 
     /**
-     * @Route("/verify/{token}", name="app_verify_email")
+     * @Route("/verify/{token}", name="app_verify_email", methods={"GET"})
      * @ParamConverter("RegisterToken", options={"mapping": {"token": "token"}})
-     * @param Request $request
-     * @param RegisterTokenRepository $tokenRepo
-     * @param string $token
-     * @param RegisterToken $tok
+     * @param ObjectManager $manager
+     * @param RegisterToken $registerToken
      * @return Response
      */
-    public function verifyUserEmail(Request $request, RegisterTokenRepository $tokenRepo, string $token, RegisterToken $tok): Response
+    public function verifyUserEmail(ObjectManager $manager, RegisterToken $registerToken): Response
     {
-        $t=$tokenRepo->findOneBy(['token' => $token]);
-        dd($t);
-
+        $origin = $registerToken->getValidityDate();
+        $target = new \DateTime();
+        $interval = $origin->diff($target);
+        if ($interval->invert){
+            $manager->persist($registerToken->getUser()->setIsVerified(true));
+            $manager->remove($registerToken);
+            $manager->flush();
+            $this->addFlash('success','Le compte a été vérifié, vous pouvez vous connecter');
+            return $this->redirectToRoute('app_login');
+        }
+        $this->addFlash('danger','La validation n\'a pas pu être effectuée, lien expiré');
         return $this->redirectToRoute('home');
     }
 }

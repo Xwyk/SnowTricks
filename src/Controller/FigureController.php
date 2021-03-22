@@ -17,6 +17,7 @@ use App\Service\DBQueries;
 use App\Service\FileUploader;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,11 +28,12 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class FigureController extends AbstractController
 {
     /**
-     * @Route("/figure/add", name="figure_add")
+     * @Route("/figure/add", name="figure_add", methods={"GET", "POST"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param FileUploader $fileUploader
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function add(Request $request, ObjectManager $manager, FileUploader $fileUploader): Response
     {
@@ -49,24 +51,23 @@ class FigureController extends AbstractController
 
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
-        return $this->render("snowtricks/addFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("figure/addFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/edit", name="figure_edit")
+     * @Route("/figure/{id}-{slug}/edit", name="figure_edit", methods={"GET", "POST"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
      * @param FileUploader $fileUploader
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function edit(Request $request, ObjectManager $manager, Figure $figure, FileUploader $fileUploader): Response
     {
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // For each picture form in form['pictures'], get uploaded image file,
-            // copy it to public folder and set url attribute value
             foreach ($form->get('pictures')->getData() as $picture) {
                 $pictureToUpload = $picture->getImage();
                 if ($pictureToUpload) {
@@ -77,14 +78,15 @@ class FigureController extends AbstractController
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
-        return $this->render("snowtricks/editFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("figure/editFigure.html.twig", ["form" => $form->createView()]);
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/delete", name="figure_delete")
+     * @Route("/figure/{id}-{slug}/delete", name="figure_delete", methods={"GET"})
      * @param ObjectManager $manager
      * @param Figure $figure
      * @return Response
+     * @IsGranted("ROLE_USER")
      */
     public function delete(ObjectManager $manager, Figure $figure): Response
     {
@@ -93,14 +95,14 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}", name="figure_show")
+     * @Route("/figure/{id}-{slug}", name="figure_show", methods={"GET"})
      * @param Figure $figure
      * @param DBQueries $DBQueries
      * @return Response
      */
     public function showOne(Figure $figure, DBQueries $DBQueries): Response
     {
-        return $this->render("snowtricks/figure.html.twig", [
+        return $this->render("figure/figure.html.twig", [
             "figure" => $figure,
             'comments' => $DBQueries->getLastCommentsForFigure($figure)
         ]);

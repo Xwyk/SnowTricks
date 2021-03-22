@@ -1,6 +1,183 @@
-{#{% block _figure_name_row %}#}
-{#    <div class="form-group">#}
-{#        <label for="{{ form.vars.full_name }}"><h2>Nom du trick</h2></label>#}
-{#        <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.data }}" class="form-control" placeholder="Nom du trick">#}
-{#    </div>#}
-{#{% endblock %}#}
+{% extends "base.html.twig" %}
+{% block externalCSS %}
+    <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
+{% endblock %}
+
+{% block body %}
+    <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+        <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
+    </div>
+    <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
+        {% block figureTitle %}
+            <div id="figureName" class="text-center">
+                <h1>{{ figure.name }}</h1>
+            </div>
+        {% endblock %}
+        {% block operations %}
+            {% if app.user %}
+                <div class="operations">
+                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
+                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+                </div>
+            {% endif %}
+        {% endblock %}
+    </div>
+    <hr>
+    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
+        <h2>Médias</h2>
+            {% block pictures %}
+            <div class="row" >
+                <div id="mediasCollectionHolder">
+                    {% for picture in figure.pictures %}
+                        <div class="card col-3 p-2 m-2 align-middle h-100">
+                            <div class="card-img-top">
+                                <img src="{{ asset(picture.url) }}" width="100%">
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% for video in figure.videos %}
+                        <div class="card col-3 p-2 m-2 align-middle">
+                            <div class="card-img-top">
+                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+{#                <div id="videosCollectionHolder">#}
+{#                    {% for video in figure.videos %}#}
+{#                        <div class="card col-4 p-2 m-2 align-middle">#}
+{#                            <div class="card-img-top">#}
+{#                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+            </div>
+
+            {% endblock %}
+{#            {% block videos %}#}
+{#                <div class="row" id="videosCollectionHolder">#}
+{#                {% for video in figure.videos %}#}
+{#                    <div class="card col-4 p-2 m-2 align-middle">#}
+{#                        <div class="card-img-top">#}
+{#                            <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#                </div>#}
+{#            {% endblock %}#}
+    </div>
+
+    <div class="row fadeOnModal">
+        <div id="figureDescription" class="col-11 mx-auto mt-4 mb-1 bg-light">
+            {% block description %}
+
+            <h3>Description :</h3>
+            {{ figure.description | raw }}
+            {% endblock %}
+
+        </div>
+    </div>
+
+    <div class="row fadeOnModal">
+        <div class="row text-center col-11 mx-auto my-2 bg-light" id="infos">
+            {% block infos %}
+
+            <p class="col">Publié le {{ figure.creationDate | date('d/m/Y') }} à {{ figure.creationDate | date('H:i') }}</p>
+            <p class="col">Catégorie : {{ figure.category.name }}</p>
+            {% endblock %}
+
+        </div>
+    </div>
+    <hr>
+    {% block comments %}
+
+    <section id="comments" class="fadeOnModal">
+        {% for comment in comments | slice(0,5) %}
+            <div class="comment row mx-auto">
+                <div class="col-md-10 col-12 mx-auto row">
+                    <p class="col-lg-10 col-8 bg-light">
+                        <strong>{{ comment.author.pseudo }}</strong> <small class="text-muted">({{ comment.creationDate | date('d/m/Y à H:i') }}) :</small>
+                        <br>{{ comment.content }}
+                    </p>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+
+    <div class="row text-center fadeOnModal">
+        <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
+    </div>
+    {% endblock %}
+    {% if app.user %}
+    <div class="row mx-auto">
+        <div class="col-md-10 col-12 mx-auto row">
+            <input type="text" id="newCommentText" class="col-lg-10 col-8" required="required" maxlength="255" class="form-control">
+            <button onclick="addcomment()" class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- The Modal/Lightbox -->
+
+    <div class="modal" id="imageModal">
+            <div class="modal-content w-auto">
+                <div class="modal-header">
+                    <button type="button" class="close cursor" data-dismiss="modal" aria-label="Close">
+                        <span class=""><i class="fas fa-times fa-2x"></i></span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img class="img-fluid" src="#" alt="">
+                </div>
+            </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/figure.js') }}"></script>
+
+    <script>
+        $("#mediasCollectionHolder img").click(function() {
+            $(".fadeOnModal").fadeTo("slow" , 0.5);
+            $(".modal img").attr("src", this.src);
+            $("#imageModal").show();
+        });
+
+        $(".close.cursor").click(function() {
+            $(".fadeOnModal").fadeTo("slow" , 1);
+            $("#imageModal").hide();
+        });
+        {% if app.user %}
+        function addcomment(){
+            $.ajax({
+                type: "POST",
+                url: '{{ path('comment_add', {'id': figure.id, 'slug': figure.slug}) }}',
+                data: {
+                    'content': $('#newCommentText').val()
+                },
+                success: function(data, status){
+                    console.log(data);
+                }
+            });
+        }
+        {% endif %}
+
+        function loadMoreComments(){
+            $.get(`
+                {{ path('loadMoreComments', {
+                    'id' : figure.id,
+                    'slug' : figure.slug,
+                    'start' : 'startindex'
+                }) }}`.replace('startindex', ($("#comments > div").length)),
+                function( data ) {
+                    $('#comments').append(data);
+                }
+            );
+        }
+        const $videosCollectionHolder = $('#mediasCollectionHolder');
+        for (const $elt of $videosCollectionHolder.find('iframe')){
+            $($elt).attr('src', urlToEmbed($($elt).attr('src')));
+        }
+    </script>
+{% endblock %}
