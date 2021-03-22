@@ -5,11 +5,7 @@
 
 {% block body %}
     <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
-        {% block pageTitle %}
-        {% endblock %}
-        {% block mainImage %}
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
-        {% endblock %}
     </div>
     <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         {% block figureTitle %}
