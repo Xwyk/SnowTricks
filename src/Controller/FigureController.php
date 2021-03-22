@@ -28,7 +28,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class FigureController extends AbstractController
 {
     /**
-     * @Route("/figure/add", name="figure_add", methods={"GET"})
+     * @Route("/figure/add", name="figure_add", methods={"GET", "POST"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param FileUploader $fileUploader
@@ -55,7 +55,7 @@ class FigureController extends AbstractController
     }
 
     /**
-     * @Route("/figure/{id}-{slug}/edit", name="figure_edit", methods={"GET"})
+     * @Route("/figure/{id}-{slug}/edit", name="figure_edit", methods={"GET", "POST"})
      * @param Request $request
      * @param ObjectManager $manager
      * @param Figure $figure
