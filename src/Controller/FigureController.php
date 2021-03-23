@@ -41,13 +41,10 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $fileUploader->uploadPictures($form->get('pictures')->getData());
-
-            $figure = $form->getData();
-
+            $pictures = $form->get('pictures')->getData();
+            $fileUploader->uploadPictures($pictures);
             $manager->persist($figure);
             $manager->flush();
-
 
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
@@ -68,6 +65,8 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            //TODO à revoir pour utiliser ton uploader
             foreach ($form->get('pictures')->getData() as $picture) {
                 $pictureToUpload = $picture->getImage();
                 if ($pictureToUpload) {
@@ -92,6 +91,8 @@ class FigureController extends AbstractController
     {
         $manager->remove($figure);
         $manager->flush();
+
+        // TODO pas de reponse ?
     }
 
     /**
@@ -100,11 +101,11 @@ class FigureController extends AbstractController
      * @param DBQueries $DBQueries
      * @return Response
      */
-    public function showOne(Figure $figure, DBQueries $DBQueries): Response
+    public function showOne(Figure $figure, FigureRepository $figureRepository): Response
     {
         return $this->render("figure/figure.html.twig", [
             "figure" => $figure,
-            'comments' => $DBQueries->getLastCommentsForFigure($figure)
+            'comments' => $figureRepository->getLastCommentsForFigure($figure)
         ]);
     }
 

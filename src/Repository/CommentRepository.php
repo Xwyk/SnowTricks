@@ -16,10 +16,33 @@ use Doctrine\Persistence\ManagerRegistry;
 class CommentRepository extends ServiceEntityRepository
 {
 
-    const COMMENTS_PER_PAGE = 5;
+    const COMMENTS_LIMIT_PER_QUERY = 5;
 
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Comment::class);
+    }
+
+    public function getLastCommentsForFigure(Figure $figure): iterable{
+
+        return  $this->createQueryBuilder('c')
+            ->where('c.figure = :figure')
+            ->setParameter('figure', $figure)
+            ->orderBy('c.creationDate', 'DESC')
+            ->setMaxResults(self::COMMENTS_LIMIT_PER_QUERY)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getNextCommmentsForFigure(Figure $figure, int $start): iterable
+    {
+        return  $this->createQueryBuilder('c')
+            ->where('c.figure = :figure')
+            ->setParameter('figure', $figure)
+            ->orderBy('c.creationDate', 'DESC')
+            ->setMaxResults(self::COMMENTS_LIMIT_PER_QUERY)
+            ->setFirstResult($start)
+            ->getQuery()
+            ->getResult();
     }
 }

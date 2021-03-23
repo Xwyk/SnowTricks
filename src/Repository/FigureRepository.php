@@ -14,37 +14,28 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FigureRepository extends ServiceEntityRepository
 {
+    const FIGURES_LIMIT_PER_QUERY = 8;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Figure::class);
     }
 
-    // /**
-    //  * @return Figure[] Returns an array of Figure objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('f.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+    public function getLastFigures(): iterable{
+        $qb = $this->createQueryBuilder('f')
+            ->orderBy('f.creationDate', 'DESC')
+            ->setMaxResults(self::FIGURES_LIMIT_PER_QUERY);
+        return $qb->getQuery()
+            ->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Figure
-    {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+    public function getNextFigures(int $start): iterable{
+        $qb = $this->createQueryBuilder('f')
+            ->orderBy('f.creationDate', 'DESC')
+            ->setMaxResults(self::FIGURES_LIMIT_PER_QUERY)
+            ->setFirstResult($start);
+
+        return $qb->getQuery()
+            ->getResult();
     }
-    */
 }

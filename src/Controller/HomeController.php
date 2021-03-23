@@ -23,38 +23,34 @@ class HomeController extends AbstractController
 {
     /**
      * @Route("/", name="home", methods={"GET"})
-     * @param DBQueries $DBQueries
+     * @param FigureRepository $figureRepository
      * @return Response
      */
-    public function home(DBQueries $DBQueries): Response
+    public function home(FigureRepository $figureRepository): Response
     {
-        $this->addFlash('info','Ceci est une info');
-        $this->addFlash('success','Ceci est une validation');
-        $this->addFlash('danger','Ceci est une erreur');
-        $this->addFlash('warning','Ceci est un avertissement');
+//        $this->addFlash('info','Ceci est une info');
+//        $this->addFlash('success','Ceci est une validation');
+//        $this->addFlash('danger','Ceci est une erreur');
+//        $this->addFlash('warning','Ceci est un avertissement');
 
-        $figures = $DBQueries->getLastFigures();
-        $categories = $DBQueries->getCategories();
+        $figures = $figureRepository->getLastFigures();
         return $this->render("home/home.html.twig", [
-            "figures" => $figures,
-            "categories" => $categories
+            "figures" => $figures
         ]);
     }
 
     /**
      * Get the 15 next tricks in the database and create a Twig file with them that will be displayed via Javascript
      *
-     * @Route("/loadMoreFigures/{category}/{start}", name="loadMoreFigures", requirements={"start": "\d+"}, defaults={"category"=0}, methods={"GET"})
-     * @ParamConverter("Category", options={"mapping": {"id": "categoru"}})
-     * @param DBQueries $DBQueries
+     * @Route("/loadMoreFigures/{start}", name="loadMoreFigures", requirements={"start": "\d+"}, methods={"GET"})
+     * @param FigureRepository $figureRepository
      * @param int $start
-     * @param Category|null $category
      * @return Response
      */
-    public function loadMoreFigures(DBQueries $DBQueries, int $start, Category $category = null)
+    public function loadMoreFigures(FigureRepository $figureRepository, int $start)
     {
         // Get 15 tricks from the start position
-        $figures = $DBQueries->getNextFigures($start, $category);
+        $figures = $figureRepository->getNextFigures($start);
         if (empty($figures)){
             $this->addFlash('info','Toutes les figures sont chargées');
         }

@@ -21,13 +21,13 @@ class CommentController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}/moreComments/{start}", name="loadMoreComments", methods={"POST"})
      * @param Figure $figure
-     * @param DBQueries $DBQueries
+     * @param CommentRepository $commentRepository
      * @param int $start
      * @return Response
      */
-    public function loadMoreComments(Figure $figure, DBQueries $DBQueries, int $start): Response
+    public function loadMoreComments(Figure $figure, CommentRepository $commentRepository, int $start): Response
     {
-        $comments = $DBQueries->getNextCommmentsForFigure($figure,$start);
+        $comments = $commentRepository->getNextCommmentsForFigure($figure,$start);
         return $this->render(
             "comment/loadMoreComments.html.twig",
             ['comments' => $comments]
@@ -44,6 +44,8 @@ class CommentController extends AbstractController
      */
     public function addComment(ObjectManager $manager, Figure $figure, Request $request): Response
     {
+
+        // TODO verifier le contenu de content
         $comment = new Comment();
         $comment->setContent($request->request->get('content'));
         $comment->setAuthor($this->getUser());

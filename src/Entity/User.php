@@ -13,8 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(
- *     fields={"mailAddress"},
- *     message="L'adresse mail que vous avez indiquée est déjà utilisée"
+ *     fields={"pseudo"},
+ *     message="Le pseudo que vous avez indiqué est déjà utilisé"
  * )
  */
 class User implements UserInterface
@@ -178,12 +178,12 @@ class User implements UserInterface
 
     public function getSalt()
     {
-        // TODO: Implement getSalt() method.
+        return '';
     }
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        return true;
     }
 
     public function isVerified(): bool

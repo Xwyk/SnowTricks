@@ -32,7 +32,7 @@ class FileUploader{
     /**
      * @param ArrayCollection $pictures
      */
-    public function uploadPictures(ArrayCollection &$pictures){
+    public function uploadPictures(ArrayCollection $pictures){
         foreach ($pictures as $picture){
             $pictureToUpload = $picture->getImage();
             if ($pictureToUpload) {

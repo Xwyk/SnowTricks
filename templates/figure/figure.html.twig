@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-    <div id="figureMainImage" class="position-relative border border-dark fadeOnModal">
+    <div id="figureMainImage" class="position-relative fadeOnModal">
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
     </div>
     <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
@@ -25,7 +25,7 @@
     <hr>
     <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         <h2>Médias</h2>
-            {% block pictures %}
+        {% block pictures %}
             <div class="row" >
                 <div id="mediasCollectionHolder">
                     {% for picture in figure.pictures %}
@@ -43,29 +43,8 @@
                         </div>
                     {% endfor %}
                 </div>
-{#                <div id="videosCollectionHolder">#}
-{#                    {% for video in figure.videos %}#}
-{#                        <div class="card col-4 p-2 m-2 align-middle">#}
-{#                            <div class="card-img-top">#}
-{#                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    {% endfor %}#}
-{#                </div>#}
             </div>
-
-            {% endblock %}
-{#            {% block videos %}#}
-{#                <div class="row" id="videosCollectionHolder">#}
-{#                {% for video in figure.videos %}#}
-{#                    <div class="card col-4 p-2 m-2 align-middle">#}
-{#                        <div class="card-img-top">#}
-{#                            <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endfor %}#}
-{#                </div>#}
-{#            {% endblock %}#}
+        {% endblock %}
     </div>
 
     <div class="row fadeOnModal">
@@ -120,7 +99,7 @@
 
     <!-- The Modal/Lightbox -->
 
-    <div class="modal" id="imageModal">
+    <div class="modal mt-5" id="imageModal">
             <div class="modal-content w-auto">
                 <div class="modal-header">
                     <button type="button" class="close cursor" data-dismiss="modal" aria-label="Close">
