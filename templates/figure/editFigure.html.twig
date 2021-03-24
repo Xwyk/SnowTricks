@@ -6,13 +6,23 @@
     ] %}
 
 {% block body %}
-    <h1 class="text-center">Edition du trick : {{ form.vars.value.name}} </h1>
-        {{ form_start(form) }}
-        {{ form_row(form.name) }}
-    <div class="operations">
-    {# <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
-    #}
+    <h1 class="text-center">Edition du trick : {{ form.vars.value.name}}
+        <a class="btn-icon">
+            <i class="fas fa-save"></i>
+            <input type="submit">
+        </a>
+    </h1>
+    {{ form_start(form) }}
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="col-12 col-sm-6">
+            {{ form_row(form.category) }}
+        </div>
     </div>
+    {{ form_row(form.description) }}
+
     <div id="figureMedias">
         <div class="row" id="picturesCollectionHolder"
              data-prototype="{{ form_widget(form.pictures.vars.prototype)|e('html_attr') }}">
@@ -23,9 +33,15 @@
         </div>
     </div>
 
-    {{ form_widget(form.description) }}
-    <p class="col">Catégorie : {{ form_widget(form.category) }}</p>
-    <button class="btn btn-success" type="submit">Valider</button>
+    <div class="w-100 mt-5 text-center">
+        <button type="submit" class="btn btn-primary">
+            <div class="d-flex justify-content-center align-items-center">
+                <p class="mb-0">Sauvegarder&nbsp;</p>
+                <i class="fas fa-2x fa-save"></i>
+            </div>
+        </button>
+    </div>
+
     {{ form_end(form) }}
 {% endblock %}
 
@@ -33,6 +49,14 @@
     {{ parent() }}
     <script src="{{ asset('js/figureEdition.js') }}"></script>
     <script src="{{ asset('js/figure.js') }}"></script>
+    <script src="https://cdn.tiny.cloud/1/qtbjnfyjw2gfqvvttixssesjg5vu9qhp3vdcrj12r0mw75wt/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea.tinyTextarea',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            toolbar_mode: 'floating',
+        });
+    </script>
 {% endblock %}
 {% block externalCSS %}
     {{ parent() }}

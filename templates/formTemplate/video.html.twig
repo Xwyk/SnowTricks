@@ -1,11 +1,12 @@
 {% block _figure_videos_entry_row %}
     <fieldset class="card col-4 p-2 m-2 align-middle">
-        <div class="card-img-top">
+        <div class="card-img-top position-relative">
             <iframe class="dynamic-display" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
-        <div class="card-body">
+        <div class="d-flex justify-content-between image-caption w-100 bg-light-transparent">
+            <div class="removeBtn image-caption"></div>
+
             {{ form_widget(form.url) }}
-            <div class="removeBtn"></div>
         </div>
     </fieldset>
 {% endblock %}
@@ -15,9 +16,13 @@
 {% endblock %}
 
 {% block _figure_videos_entry_url_widget %}
-    <input type="text" class="dynamic-entry form-control" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.value }}"/>
+    <input type="text" class="dynamic-entry" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.value }}"/>
 {% endblock %}
 
 {% block _figure_videos_entry_widget %}
     {{ form_row(form) }}
+{% endblock %}
+
+{% block _figure_videos_label %}
+    <legend class="col-form-label required">Vidéos</legend>
 {% endblock %}

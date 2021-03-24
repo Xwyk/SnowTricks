@@ -8,16 +8,16 @@
 
 {% block body %}
 
-    <div id="figureMainImage" class="fadeOnModal imageContainer">
+    <div id="figureMainImage" class="fadeOnModal position-relative">
+        <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
         {% block operations %}
             {% if app.user %}
-                <div class="d-flex flex-row-reverse">
-                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" class="text-danger mx-1" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
-                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}" class="text-dark mx-1"><i class="fas fa-pencil-alt"></i></a>
+                <div class="image-caption bg-light-transparent">
+                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}" class="text-dark"><i class="fas fa-2x fa-pencil-alt"></i></a>
+                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" class="text-danger" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-2x  fa-trash-alt"></i></a>
                 </div>
             {% endif %}
         {% endblock %}
-        <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
     </div>
     <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         {% block figureTitle %}
@@ -75,15 +75,15 @@
     </div>
     <hr>
     {% block comments %}
+
         {% if app.user %}
             {{ form_start(formComment, {'attr': {'id': 'commentForm'}}) }}
             {{ form_row(formComment) }}
             {{ form_end(formComment) }}
         {% endif %}
-
-    <section id="comments" class="fadeOnModal">
-        {% for comment in comments | slice(0,5) %}
-            <div class="comment row mx-auto">
+        <section id="comments" class="fadeOnModal">
+            {% for comment in comments | slice(0,5) %}
+            <div id="{{ comment.id }}" class="comment row mx-auto">
                 <div class="col-md-10 col-12 mx-auto row">
                     <p class="col-lg-10 col-8 bg-light">
                         <strong>{{ comment.author.pseudo }}</strong> <small class="text-muted">({{ comment.creationDate | date('d/m/Y à H:i') }}) :</small>
@@ -166,6 +166,5 @@
             $($elt).attr('src', urlToEmbed($($elt).attr('src')));
         }
 
-        $('#figureMainImage').css('background-image', 'url("'+$('#figureMainImage>img').attr('src')+'")')
     </script>
 {% endblock %}

@@ -45,4 +45,16 @@ class CommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getCommentsAfterForFigure(Figure $figure, int $id)
+    {
+        return  $this->createQueryBuilder('c')
+            ->where('c.figure = :figure')
+            ->andWhere('c.id > :id')
+            ->setParameter('figure', $figure)
+            ->setParameter('id', $id)
+            ->orderBy('c.creationDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

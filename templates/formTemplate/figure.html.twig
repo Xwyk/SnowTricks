@@ -1,6 +1,28 @@
-{#{% block _figure_name_row %}#}
-{#    <div class="form-group">#}
-{#        <label for="{{ form.vars.full_name }}"><h2>Nom du trick</h2></label>#}
-{#        <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" value="{{ form.vars.data }}" class="form-control" placeholder="Nom du trick">#}
-{#    </div>#}
-{#{% endblock %}#}
+{% block _figure_description_label %}
+    <legend class="col-form-label required">Description</legend>
+{% endblock %}
+
+{% block _figure_description_widget %}
+    <textarea id="{{ form.vars.id }}" name="{{ form.vars.full_name}}" required="required" class="form-control tinyTextarea">{{ form.vars.data|raw }}</textarea>
+{% endblock %}
+
+{% block _figure_category_label %}
+    <legend class="col-form-label required">Catégorie</legend>
+{% endblock %}
+
+{% block _figure_name_label %}
+    <legend class="col-form-label required">Nom du trick</legend>
+{% endblock %}
+
+{% block _figure_name_widget %}
+    <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" required="required" maxlength="255" class="form-control" value="{{ form.vars.data }}">
+{% endblock %}
+
+
+{% block _figure_category_widget %}
+    <select id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" class="form-control">
+        {% for choice in form.vars.choices %}
+            <option value="{{ choice.value }}" {% if choice.data.id == form.vars.data.id %} selected {% endif %}>{{ choice.label }}</option>
+        {% endfor %}
+    </select>
+{% endblock %}

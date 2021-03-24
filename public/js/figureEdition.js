@@ -69,15 +69,17 @@ function addAddButton($elt, value, isVideo = true) {
  * @param $collectionHolder elements collection holder
  */
 function addRemoveButton($elt, $collectionHolder){
-    const button = document.createElement('button');
-    button.className = "btn btn-danger";
-    button.innerText = "Delete";
-    button.addEventListener('click', (e) => {
+    const link = document.createElement('a');
+    const icon = document.createElement('i');
+    link.className = "text-danger";
+    icon.className = "fas fa-2x fa-trash-alt";
+    link.appendChild(icon)
+    link.addEventListener('click', (e) => {
         $elt.remove();
         let index = $collectionHolder.data('index');
         $collectionHolder.data('index', index --);
     });
-    $($elt).find('.removeBtn').append(button);
+    $($elt).find('.removeBtn').append(link);
 }
 
 /**

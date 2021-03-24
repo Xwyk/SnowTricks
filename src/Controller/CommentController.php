@@ -60,4 +60,20 @@ class CommentController extends AbstractController
         return new Response("bite");
 
     }
+
+    /**
+     * @Route("/figure/{id}-{slug}/after/{start}", name="loadMoreComments", methods={"POST"})
+     * @param Figure $figure
+     * @param CommentRepository $commentRepository
+     * @param int $start
+     * @return Response
+     */
+    public function getCommentsAfter(Figure $figure, CommentRepository $commentRepository, int $start): Response
+    {
+        $comments = $commentRepository->getCommentsAfterForFigure($figure,$start);
+        return $this->render(
+            "comment/loadMoreComments.html.twig",
+            ['comments' => $comments]
+        );
+    }
 }

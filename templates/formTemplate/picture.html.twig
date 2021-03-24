@@ -1,18 +1,21 @@
 {% block _figure_pictures_entry_row %}
     <fieldset class="card col-4 p-2 m-2 align-middle">
-        <div class="card-img-top">
+        <div class="card-img-top position-relative">
             {{ form_errors(form.image) }}
             {{ form_widget(form.url) }}
         </div>
-        <div class="card-body">
+        <div class="d-flex justify-content-between image-caption w-100 bg-light-transparent">
             {{ form_widget(form.image) }}
+            <p class="">
+                ÉDITION
+            </p>
             <div class="removeBtn"></div>
         </div>
     </fieldset>
 {% endblock %}
 
-{% block _figure_pictures_entry_url_row %}
-chien
+{% block _figure_pictures_label %}
+    <legend class="col-form-label required">Images</legend>
 {% endblock %}
 
 {% block _figure_pictures_entry_url_widget %}
@@ -21,11 +24,9 @@ chien
 {% endblock %}
 
 {% block _figure_pictures_entry_image_widget %}
-    <input type="file" class="dynamic-entry" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}">
-{% endblock %}
-
-{% block _figure_pictures_entry_image_row %}
-    mangetamere
+    <a class="btn-icon">
+        <i class="fas fa-2x fa-cloud-upload-alt"></i><input type="file" class="dynamic-entry" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}">
+    </a>
 {% endblock %}
 
 {% block _figure_pictures_entry_widget %}
