@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Figure;
+use App\Form\CommentType;
+use App\Form\FigureType;
 use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
 use App\Service\DBQueries;
@@ -44,14 +46,18 @@ class CommentController extends AbstractController
      */
     public function addComment(ObjectManager $manager, Figure $figure, Request $request): Response
     {
-
         // TODO verifier le contenu de content
         $comment = new Comment();
-        $comment->setContent($request->request->get('content'));
-        $comment->setAuthor($this->getUser());
-        $figure->addComment($comment);
-        $manager->persist($figure);
-        $manager->flush();
-        return $this->render("comment/oneMoreComment.html.twig", ['comment' => $comment]);
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()){
+            $comment->setAuthor($this->getUser());
+            $figure->addComment($comment);
+            $manager->persist($figure);
+            $manager->flush();
+            return $this->render("comment/loadMoreComments.html.twig", ['comments' => array($comment)]);
+        }
+        return new Response("bite");
+
     }
 }

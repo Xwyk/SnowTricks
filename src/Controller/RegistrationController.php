@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\RegisterToken;
 use App\Entity\User;
-use App\Form\RegistrationFormType;
+use App\Form\RegistrationType;
 use App\Manager\UserManager;
 use App\Service\ApplicationMailer;
 use Doctrine\Persistence\ObjectManager;
@@ -32,7 +32,7 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('home');
         }
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

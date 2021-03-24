@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
+use App\Entity\Comment;
 use App\Entity\Figure;
 use App\Entity\Media;
 use App\Entity\Picture;
@@ -48,7 +49,9 @@ class FigureController extends AbstractController
 
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
-        return $this->render("figure/addFigure.html.twig", ["form" => $form->createView()]);
+        return $this->render("figure/addFigure.html.twig", [
+            "form" => $form->createView()
+        ]);
     }
 
     /**
@@ -98,14 +101,20 @@ class FigureController extends AbstractController
     /**
      * @Route("/figure/{id}-{slug}", name="figure_show", methods={"GET"})
      * @param Figure $figure
-     * @param DBQueries $DBQueries
+     * @param CommentRepository $commentRepository
      * @return Response
      */
-    public function showOne(Figure $figure, FigureRepository $figureRepository): Response
+    public function showOne(Figure $figure, CommentRepository $commentRepository): Response
     {
+
+        $formComment = $this->createForm(CommentType::class, new Comment(),[
+            'action' => $this->generateUrl('comment_add', ['id' =>$figure->getId(), 'slug'=>$figure->getSlug()]),
+            'method' => 'POST'
+        ]);
         return $this->render("figure/figure.html.twig", [
             "figure" => $figure,
-            'comments' => $figureRepository->getLastCommentsForFigure($figure)
+            'comments' => $commentRepository->getLastCommentsForFigure($figure),
+            "formComment" => $formComment->createView()
         ]);
     }
 

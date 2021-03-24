@@ -33,7 +33,10 @@ class Comment
     private $creationDate;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Assert\Length(min="2", minMessage="Votre commentaire doit faire au minimum 2 caractères")
      */
     private $content;
 

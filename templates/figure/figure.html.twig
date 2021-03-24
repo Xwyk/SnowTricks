@@ -1,10 +1,22 @@
 {% extends "base.html.twig" %}
+{% form_theme formComment with [
+    'formTemplate/comment.html.twig'
+    ] %}
 {% block externalCSS %}
     <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
 {% endblock %}
 
 {% block body %}
-    <div id="figureMainImage" class="position-relative fadeOnModal">
+
+    <div id="figureMainImage" class="fadeOnModal imageContainer">
+        {% block operations %}
+            {% if app.user %}
+                <div class="d-flex flex-row-reverse">
+                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" class="text-danger mx-1" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
+                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}" class="text-dark mx-1"><i class="fas fa-pencil-alt"></i></a>
+                </div>
+            {% endif %}
+        {% endblock %}
         <img class="w-100" src="{{ asset(figure.pictures|first.url) }}">
     </div>
     <div id="figureTitle" class="row p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
@@ -13,14 +25,7 @@
                 <h1>{{ figure.name }}</h1>
             </div>
         {% endblock %}
-        {% block operations %}
-            {% if app.user %}
-                <div class="operations">
-                    <a href="{{ path('figure_edit', {'id': figure.id, 'slug': figure.slug}) }}"><i class="fas fa-pencil-alt"></i></a>
-                    <a href="{{ path('figure_delete', {'id': figure.id, 'slug': figure.slug}) }}" onclick="return confirm(`Êtes-vous sûr de vouloir supprimer la figure : {{figure.name}} ?`)"><i class="fas fa-trash-alt"></i></a>
-                </div>
-            {% endif %}
-        {% endblock %}
+
     </div>
     <hr>
     <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
@@ -70,6 +75,11 @@
     </div>
     <hr>
     {% block comments %}
+        {% if app.user %}
+            {{ form_start(formComment, {'attr': {'id': 'commentForm'}}) }}
+            {{ form_row(formComment) }}
+            {{ form_end(formComment) }}
+        {% endif %}
 
     <section id="comments" class="fadeOnModal">
         {% for comment in comments | slice(0,5) %}
@@ -88,14 +98,7 @@
         <button id="loadMoreComments" onclick="loadMoreComments()" class="btn btn-primary col-md-6 col-8 mx-auto">Voir plus de commentaires</button>
     </div>
     {% endblock %}
-    {% if app.user %}
-    <div class="row mx-auto">
-        <div class="col-md-10 col-12 mx-auto row">
-            <input type="text" id="newCommentText" class="col-lg-10 col-8" required="required" maxlength="255" class="form-control">
-            <button onclick="addcomment()" class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
-        </div>
-    </div>
-    {% endif %}
+
 
     <!-- The Modal/Lightbox -->
 
@@ -128,18 +131,21 @@
             $("#imageModal").hide();
         });
         {% if app.user %}
-        function addcomment(){
+
+        $('#commentForm').submit(function(e) {
+            e.preventDefault();
+            const url = $(this).attr('action');
+            const formSerialize = $(this).serialize();
+
             $.ajax({
                 type: "POST",
-                url: '{{ path('comment_add', {'id': figure.id, 'slug': figure.slug}) }}',
-                data: {
-                    'content': $('#newCommentText').val()
-                },
+                url: url,
+                data: formSerialize,
                 success: function(data, status){
-                    console.log(data);
+                    $('#comments').prepend(data);
                 }
             });
-        }
+        });
         {% endif %}
 
         function loadMoreComments(){
@@ -150,6 +156,7 @@
                     'start' : 'startindex'
                 }) }}`.replace('startindex', ($("#comments > div").length)),
                 function( data ) {
+                    console.log(data);
                     $('#comments').append(data);
                 }
             );
@@ -158,5 +165,7 @@
         for (const $elt of $videosCollectionHolder.find('iframe')){
             $($elt).attr('src', urlToEmbed($($elt).attr('src')));
         }
+
+        $('#figureMainImage').css('background-image', 'url("'+$('#figureMainImage>img').attr('src')+'")')
     </script>
 {% endblock %}

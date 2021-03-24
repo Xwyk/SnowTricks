@@ -1,0 +1,12 @@
+{% block _comment_row %}
+    <div class="row mx-auto">
+        <div class="col-md-10 col-12 mx-auto row">
+            {{ form_widget(form.content) }}
+            <button type="submit"class="btn btn-primary col-lg-2 col-4">Ajouter commentaire</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _comment_content_widget %}
+    <input type="text" id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" required class="col-lg-10 col-8">
+{% endblock %}
