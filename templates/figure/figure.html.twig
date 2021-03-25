@@ -1,9 +1,10 @@
 {% extends "base.html.twig" %}
 {% form_theme formComment with [
-    'formTemplate/comment.html.twig'
+    'formTemplate/figureShow/comment.html.twig'
     ] %}
 {% block externalCSS %}
     <link rel="stylesheet" href="{{ asset('css/figure.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/video.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -34,18 +35,18 @@
             <div class="row" >
                 <div id="mediasCollectionHolder">
                     {% for picture in figure.pictures %}
-                        <div class="card col-3 p-2 m-2 align-middle h-100">
+                        <fieldset class="card col-3 p-2 m-2 align-middle h-100">
                             <div class="card-img-top">
                                 <img src="{{ asset(picture.url) }}" width="100%">
                             </div>
-                        </div>
+                        </fieldset>
                     {% endfor %}
                     {% for video in figure.videos %}
-                        <div class="card col-3 p-2 m-2 align-middle">
+                        <fieldset class="card col-3 p-2 m-2 align-middle">
                             <div class="card-img-top">
                                 <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>
                             </div>
-                        </div>
+                        </fieldset>
                     {% endfor %}
                 </div>
             </div>

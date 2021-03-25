@@ -1,18 +1,18 @@
 {% extends "base.html.twig" %}
 {% form_theme form with [
-    'formTemplate/video.html.twig',
-    'formTemplate/picture.html.twig',
-    'formTemplate/figure.html.twig'
+    'formTemplate/figureEdition/video.html.twig',
+    'formTemplate/figureEdition/picture.html.twig',
+    'formTemplate/figureEdition/figure.html.twig'
     ] %}
 
 {% block body %}
+    {{ form_start(form) }}
     <h1 class="text-center">Edition du trick : {{ form.vars.value.name}}
-        <a class="btn-icon">
+        <a class="btn-icon text-success">
             <i class="fas fa-save"></i>
             <input type="submit">
         </a>
     </h1>
-    {{ form_start(form) }}
     <div class="row">
         <div class="col-12 col-sm-6">
             {{ form_row(form.name) }}
@@ -34,7 +34,7 @@
     </div>
 
     <div class="w-100 mt-5 text-center">
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn btn-success">
             <div class="d-flex justify-content-center align-items-center">
                 <p class="mb-0">Sauvegarder&nbsp;</p>
                 <i class="fas fa-2x fa-save"></i>
@@ -53,8 +53,46 @@
     <script>
         tinymce.init({
             selector: 'textarea.tinyTextarea',
-            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
             toolbar_mode: 'floating',
+            image_title: true,
+            block_unsupported_drop: false,
+            language: 'fr_FR',
+            /*
+              URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+              images_upload_url: 'postAcceptor.php',
+              here we add custom filepicker only to Image dialog
+            */
+            file_picker_types: 'image',
+            images_file_types: 'jpg,jpeg,png,svg,webp',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                const extensions = ['image/jpg','image/jpeg','image/gif','image/png','image/svg','image/webp']
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+
+                input.onchange = function () {
+                    var file = this.files[0];
+                    if (!extensions.includes(file.type)){
+                        alert("Veuillez n'inséque des images");
+                        return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function () {
+
+                        var id = 'blobid' + (new Date()).getTime();
+                        var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                        var base64 = reader.result.split(',')[1];
+                        var blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+
+                        cb(blobInfo.blobUri(), { title: file.name });
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                input.click();
+            },
         });
     </script>
 {% endblock %}

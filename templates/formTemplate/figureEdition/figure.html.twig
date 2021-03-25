@@ -3,7 +3,7 @@
 {% endblock %}
 
 {% block _figure_description_widget %}
-    <textarea id="{{ form.vars.id }}" name="{{ form.vars.full_name}}" required="required" class="form-control tinyTextarea">{{ form.vars.data|raw }}</textarea>
+    <textarea id="{{ form.vars.id }}" name="{{ form.vars.full_name}}" required="required" class="form-control tinyTextarea" style="height: 12rem">{{ form.vars.data|raw }}</textarea>
 {% endblock %}
 
 {% block _figure_category_label %}
