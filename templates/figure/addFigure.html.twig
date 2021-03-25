@@ -6,14 +6,22 @@
 ] %}
 
 {% block body %}
-    <h1 class="text-center">Edition du trick</h1>
     {{ form_start(form) }}
-    {{ form_row(form.name, {
-        'label' : "Nom du trick",
-        'attr' : {
-            'placeholder' : 'Nom du trick (doit être unique)'
-        }
-    }) }}
+    <h1 class="text-center">Edition du trick : {{ form.vars.value.name}}
+        <a class="btn-icon text-success">
+            <i class="fas fa-save"></i>
+            <input type="submit">
+        </a>
+    </h1>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            {{ form_row(form.name) }}
+        </div>
+        <div class="col-12 col-sm-6">
+            {{ form_row(form.category) }}
+        </div>
+    </div>
+    {{ form_row(form.description) }}
 
     <div id="figureMedias">
         <div class="row" id="picturesCollectionHolder"
@@ -25,21 +33,66 @@
         </div>
     </div>
 
-    {{ form_row(form.description, {
-        'label' : "Description du trick",
-        'attr' : {
-            'placeholder' : 'Description du trick '
-        }
-    }) }}
-    <p class="col">Catégorie : {{ form_widget(form.category) }}</p>
-    <button class="btn btn-success" type="submit">Valider</button>
-    {{ form_end(form) }}
+    <div class="w-100 mt-5 text-center">
+        <button type="submit" class="btn btn-success">
+            <div class="d-flex justify-content-center align-items-center">
+                <p class="mb-0">Sauvegarder&nbsp;</p>
+                <i class="fas fa-2x fa-save"></i>
+            </div>
+        </button>
+    </div>
 {% endblock %}
 
 {% block scripts %}
     {{ parent() }}
     <script src="{{ asset('js/figureEdition.js') }}"></script>
     <script src="{{ asset('js/figure.js') }}"></script>
+    <script src="https://cdn.tiny.cloud/1/qtbjnfyjw2gfqvvttixssesjg5vu9qhp3vdcrj12r0mw75wt/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: 'textarea.tinyTextarea',
+            plugins: 'advlist autolink lists link image charmap print preview hr anchor pagebreak autoresize',
+            toolbar_mode: 'floating',
+            image_title: true,
+            block_unsupported_drop: false,
+            language: 'fr_FR',
+            /*
+              URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+              images_upload_url: 'postAcceptor.php',
+              here we add custom filepicker only to Image dialog
+            */
+            file_picker_types: 'image',
+            images_file_types: 'jpg,jpeg,png,svg,webp',
+            file_picker_callback: function (cb, value, meta) {
+                var input = document.createElement('input');
+                const extensions = ['image/jpg','image/jpeg','image/gif','image/png','image/svg','image/webp']
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
+
+                input.onchange = function () {
+                    var file = this.files[0];
+                    if (!extensions.includes(file.type)){
+                        alert("Veuillez n'inséque des images");
+                        return;
+                    }
+                    var reader = new FileReader();
+                    reader.onload = function () {
+
+                        var id = 'blobid' + (new Date()).getTime();
+                        var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+                        var base64 = reader.result.split(',')[1];
+                        var blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
+
+                        cb(blobInfo.blobUri(), { title: file.name });
+                    };
+                    reader.readAsDataURL(file);
+                };
+
+                input.click();
+            },
+        });
+    </script>
 {% endblock %}
 {% block externalCSS %}
     {{ parent() }}

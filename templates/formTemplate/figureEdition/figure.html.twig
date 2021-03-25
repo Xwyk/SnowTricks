@@ -22,7 +22,7 @@
 {% block _figure_category_widget %}
     <select id="{{ form.vars.id }}" name="{{ form.vars.full_name }}" class="form-control">
         {% for choice in form.vars.choices %}
-            <option value="{{ choice.value }}" {% if choice.data.id == form.vars.data.id %} selected {% endif %}>{{ choice.label }}</option>
+            <option value="{{ choice.value }}" {% if form.vars.data and choice.data.id == form.vars.data.id %} selected {% endif %}>{{ choice.label }}</option>
         {% endfor %}
     </select>
 {% endblock %}
