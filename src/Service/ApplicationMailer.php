@@ -38,14 +38,15 @@ class ApplicationMailer
         );
     }
 
-    public function sendResetPasswordMail(ResetPasswordToken $token){
+    public function sendResetMail(ResetPasswordToken $token)
+    {
         $this->mailer->send(
             (new Email())
                 ->from('contact@snowtricks.fr')
                 ->to($token->getUser()->getMailAddress())
                 ->subject('Réinitialisez votre mot de passe')
                 ->text('Réinitialisez votre mot de passe')
-                ->html($this->twig->render('registration/confirmation_email.html.twig', [
+                ->html($this->twig->render('security/reset_email.html.twig', [
                     'token' => $token
                 ]))
         );

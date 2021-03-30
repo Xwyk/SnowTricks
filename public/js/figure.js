@@ -16,7 +16,7 @@ function srcToEmbed($elt){
     if (match && match[2].length == 11)
     {
         const id = match[2];
-        const embedlink = "http://www.youtube.com/embed/" + id;
+        const embedlink = "//www.youtube.com/embed/" + id;
         $($elt).find('.dynamic-display').attr('src', embedlink);
     }
 }
@@ -27,7 +27,7 @@ function urlToEmbed(url){
     if (match && match[2].length == 11)
     {
         const id = match[2];
-        const embed = "http://www.youtube.com/embed/" + id;
+        const embed = "//www.youtube.com/embed/" + id;
         return embed;
     }
     return false;
