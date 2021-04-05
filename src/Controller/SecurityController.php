@@ -2,12 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Figure;
 use App\Entity\RegisterToken;
 use App\Entity\ResetPasswordToken;
 use App\Entity\User;
+use App\Form\FigureType;
 use App\Form\RegistrationType;
+use App\Form\ResetPasswordType;
 use App\Manager\UserManager;
 use App\Repository\UserRepository;
+use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +59,29 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/reset/{token}", name="app_reset", methods={"GET", "POST"}, defaults={"token": null})
+     * @Route("/reset", name="app_ask_for_reset", methods={"GET", "POST"})
+     * @param Request $request
+     * @param UserManager $userManager
+     * @param UserRepository $userRepository
+     * @return Response
+     */
+    public function askForReset(ObjectManager $manager, Request $request, UserManager $userManager, UserRepository $userRepository, ResetPasswordToken $resetPasswordToken = null): Response
+    {
+        if ($this->getUser()){
+            $this->addFlash('info', 'Vous êtes déjà connecté en tant que '.$this->getUser()->getUsername().'');
+            return $this->redirectToRoute('home');
+        }
+        $pseudo = $request->request->get('pseudo');
+        if (!$pseudo){
+            return $this->render('security/reset.html.twig');
+        }
+        $userManager->sendReset($pseudo);
+        $this->addFlash('info', 'Un mail de réinitialisation vous a été envoyé.');
+        return $this->redirectToRoute('home');
+    }
+
+    /**
+     * @Route("/reset/{token}", name="app_reset", methods={"GET", "POST"})
      * @ParamConverter("ResetPasswordToken", options={"mapping": {"token": "token"}})
      * @param Request $request
      * @param UserManager $userManager
@@ -63,23 +89,31 @@ class SecurityController extends AbstractController
      * @param ResetPasswordToken|null $resetPasswordToken
      * @return Response
      */
-    public function reset(Request $request, UserManager $userManager, UserRepository $userRepository, ResetPasswordToken $resetPasswordToken = null): Response
+    public function resetPassword(ObjectManager $manager, Request $request, UserManager $userManager, UserRepository $userRepository, ResetPasswordToken $resetPasswordToken = null): Response
     {
         if ($this->getUser()){
             $this->addFlash('info', 'Vous êtes déjà connecté en tant que '.$this->getUser()->getUsername().'');
             return $this->redirectToRoute('home');
         }
-        if (!$resetPasswordToken){
-            $pseudo = $request->request->get('pseudo');
 
-            if (!$pseudo){
-                return $this->render('security/reset.html.twig');
-            }
-            $userManager->sendReset($pseudo);
-            $this->addFlash('info', 'Un mail de réinitialisation vous a été envoyé.');
-            return $this->redirectToRoute('home');
+        $tempUser = new User();
+        $form = $this->createForm(ResetPasswordType::class, $tempUser);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+           $user = $resetPasswordToken->getUser();
+           $user->setPassword((password_hash($form->get('plainPassword')->getData(), PASSWORD_BCRYPT )));
+            $manager->persist($user);
+            $manager->flush();
+
+            $this->addFlash('info', 'VOtre mot de passe à été enregistré, merci de vous reconnecter');
+            $this->redirectToRoute('app_login');
         }
-        dd($resetPasswordToken);
+
+        return $this->render('security/reset_password.html.twig', [
+            'form' => $form->createView(),
+        ]);
+
+
     }
 
     /**
