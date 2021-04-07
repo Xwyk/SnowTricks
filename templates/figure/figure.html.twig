@@ -44,8 +44,7 @@
                     {% for video in figure.videos %}
                         <fieldset class="card col-3 p-2 m-2 align-middle">
                             <div class="card-img-top">
-                                {{ video.url|toEmbed }}
-{#                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" src="" allowfullscreen></iframe>#}
+                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" src="{{ video.url|toEmbed }}" allowfullscreen></iframe>
                             </div>
                         </fieldset>
                     {% endfor %}
@@ -80,6 +79,7 @@
 
         {% if app.user %}
             {{ form_start(formComment, {'attr': {'id': 'commentForm'}}) }}
+            {{ form_errors(formComment) }}
             {{ form_row(formComment) }}
             {{ form_end(formComment) }}
         {% endif %}
@@ -145,6 +145,9 @@
                 data: formSerialize,
                 success: function(data, status){
                     $('#comments').prepend(data);
+                },
+                error: ()=>{
+                    alert("Le commentaire n'est pas valide");
                 }
             });
         });

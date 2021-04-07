@@ -18,8 +18,12 @@ class UrlMediaEmbedConverterExtension extends AbstractExtension
         ];
     }
 
-    public function convertToEmbed($url)
+    public function convertToEmbed($url): string
     {
-       dump($url);
+        $regexp = '/^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/';
+        if (preg_match($regexp, $url, $matches)){
+            return '//www.youtube.com/embed/'.$matches[2];
+        }
+
     }
 }

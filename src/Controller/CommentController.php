@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController extends AbstractController
@@ -57,7 +58,7 @@ class CommentController extends AbstractController
             $manager->flush();
             return $this->render("comment/loadMoreComments.html.twig", ['comments' => array($comment)]);
         }
-        return new Response("bite");
+        return new Response('I\'m a teapot', 418);
 
     }
 
