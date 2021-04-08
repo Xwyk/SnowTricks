@@ -95,7 +95,8 @@ class FigureController extends AbstractController
         $manager->remove($figure);
         $manager->flush();
 
-        // TODO pas de reponse ?
+        $this->addFlash('info', 'La figure '.$figure->getName().' a été supprimée');
+        return $this->redirectToRoute('home');
     }
 
     /**
