@@ -62,10 +62,9 @@ class SecurityController extends AbstractController
      * @Route("/reset", name="app_ask_for_reset", methods={"GET", "POST"})
      * @param Request $request
      * @param UserManager $userManager
-     * @param UserRepository $userRepository
      * @return Response
      */
-    public function askForReset(ObjectManager $manager, Request $request, UserManager $userManager, UserRepository $userRepository, ResetPasswordToken $resetPasswordToken = null): Response
+    public function askForReset(Request $request, UserManager $userManager): Response
     {
         if ($this->getUser()){
             $this->addFlash('info', 'Vous êtes déjà connecté en tant que '.$this->getUser()->getUsername().'');
@@ -83,13 +82,12 @@ class SecurityController extends AbstractController
     /**
      * @Route("/reset/{token}", name="app_reset", methods={"GET", "POST"})
      * @ParamConverter("ResetPasswordToken", options={"mapping": {"token": "token"}})
-     * @param Request $request
-     * @param UserManager $userManager
-     * @param UserRepository $userRepository
      * @param ResetPasswordToken|null $resetPasswordToken
+     * @param Request $request
+     * @param UserRepository $userRepository
      * @return Response
      */
-    public function resetPassword(ObjectManager $manager, Request $request, UserManager $userManager, UserRepository $userRepository, ResetPasswordToken $resetPasswordToken = null): Response
+    public function resetPassword(ObjectManager $manager, Request $request, ResetPasswordToken $resetPasswordToken = null): Response
     {
         if ($this->getUser()){
             $this->addFlash('info', 'Vous êtes déjà connecté en tant que '.$this->getUser()->getUsername().'');

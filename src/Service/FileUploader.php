@@ -12,21 +12,21 @@ class FileUploader{
     protected $slugger;
     protected $params;
     protected $pictures_directory;
-    protected $root_public_directory;
+    protected $rootPublicDirectory;
 
     /**
      * FileUploader constructor.
      * @param SluggerInterface $slugger
      * @param ParameterBagInterface $params
-     * @param string $root_public_directory
+     * @param string $rootPublicDirectory
      * @param string $pictures_directory
      */
-    public function __construct(SluggerInterface $slugger, ParameterBagInterface $params, string $root_public_directory, string $pictures_directory)
+    public function __construct(SluggerInterface $slugger, ParameterBagInterface $params, string $rootPublicDirectory, string $pictures_directory)
     {
         $this->params  = $params;
         $this->slugger = $slugger;
         $this->pictures_directory = $pictures_directory;
-        $this->root_public_directory = $root_public_directory;
+        $this->rootPublicDirectory = $rootPublicDirectory;
     }
 
     /**
@@ -53,7 +53,7 @@ class FileUploader{
         $newFilename = $sluggedFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
 
         $relativeDirectory = $this->pictures_directory;
-        $absoluteDirectory = $this->root_public_directory.$relativeDirectory;
+        $absoluteDirectory = $this->rootPublicDirectory.$relativeDirectory;
         // Move to picture directory
         try {
             $pictureToUpload->move(

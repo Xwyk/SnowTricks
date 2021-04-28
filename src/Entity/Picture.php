@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PictureRepository::class)
+ * @ORM\EntityListeners({"App\EntityListener\PictureListener"})
  */
 class Picture
 {
@@ -81,4 +82,5 @@ class Picture
     {
         $this->image = $image;
     }
+
 }

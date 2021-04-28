@@ -69,13 +69,8 @@ class FigureController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            //TODO à revoir pour utiliser ton uploader
-            foreach ($form->get('pictures')->getData() as $picture) {
-                $pictureToUpload = $picture->getImage();
-                if ($pictureToUpload) {
-                    $picture->setUrl($fileUploader->uploadPicture($pictureToUpload));
-                }
-            }
+            $pictures = $form->get('pictures')->getData();
+            $fileUploader->uploadPictures($pictures);
             $manager->persist($figure);
             $manager->flush();
             return $this->redirectToRoute('figure_show', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
