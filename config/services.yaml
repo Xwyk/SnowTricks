@@ -34,6 +34,10 @@ services:
         bind:
             $pictures_directory: '/img/full/'
 
+    App\DataFixtures\AppFixtures:
+        bind:
+            $pictures_directory: '/img/full/'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 

@@ -8,193 +8,211 @@ use App\Entity\Figure;
 use App\Entity\Picture;
 use App\Entity\User;
 use App\Entity\Video;
+use App\Service\FileUploader;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\File\File;
 
 class AppFixtures extends Fixture
 {
+    private FileUploader $fileUploader;
+    private string $rootPublicDirectory;
+    private string $pictures_directory;
+    private \Faker\Generator $faker;
+    const COMMENTS = [
+        'Excellent !',
+        'Wow, halluciant',
+        'C\'est vraiment le meilleur trick au monde',
+        'Mon père s\'est cassé une jambe en le faisant !',
+        'Demande de la maîtrise, mais juste parfait',
+        'Merci pour le partage',
+        'N\'hésitez pas à partager sur tous les réseaux !',
+        'Chapeau',
+        'Je pensais ça possible uniquement dans les SSX',
+        'Vivement que je reçoive mon nouveau snow',
+        'Ce site est juste parfait pour tout partager',
+        'Un véritable puis de savoir est disponible',
+        'Superbes explications',
+        'Bravo',
+        'Egalement réalisable en reverse !'];
+    const CATEGORIES = [
+        "Les grabs" => [
+            'Japan' => [
+                'description' => "Saisie de l'avant de la planche, avec la main avant, du côté de la carre frontside",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ],
+            'Seatbelt'=> [
+                'description' => "",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ],
+        ],
+        "Les rotations" => [
+            '540' => [
+                'description' => "cinq quatre pour un tour et demi"
+            ],
+            '900'=> [
+                'description' => "pour deux tours et demi",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ],
+        "Les flips" =>[
+            'Front flip'=> [
+                'description' => "Comme un flip, mais en front",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ],
+        "Les rotations désaxées"=>[
+            'Rotation désaxée'=> [
+                'description' => "Les rotations désaxées",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ],
+        "Les slides"=>[
+            'Nose slide'=> [
+                'description' => "Un slide consiste à glisser sur une barre de slide. Le slide se fait soit avec la planche dans l'axe de la barre, soit perpendiculaire, soit plus ou moins désaxé.",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ],
+        "Les one foot tricks"=>[
+            'One foot joe'=> [
+                'description' => "?",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ],
+        "Old school"=>[
+            'Backside Air'=> [
+                'description' => "Dans l'air, mais à l'envers",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ]
+        ]
+    ];
+
+    public function __construct(FileUploader $fileUploader, string $rootPublicDirectory, string $pictures_directory)
+    {
+        $this->faker = \Faker\Factory::create("fr_FR");
+        $this->fileUploader = $fileUploader;
+        $this->rootPublicDirectory = $rootPublicDirectory;
+        $this->pictures_directory = $pictures_directory;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager)
     {
-        $faker = \Faker\Factory::create("fr_FR");
 
         // Create fake users
         $users = array();
+        $this->createUsers($users);
+        foreach ($users as $user){
+            $manager->persist($user);
+        }
+
+        // Create fake categories
+        $categories = array();
+        $this->createCategories($categories);
+        foreach ($categories as $category){
+            $manager->persist($category);
+        }
+
+        $figures = array();
+        $this->createFigures($figures, $categories, $users);
+        foreach ($figures as $figure){
+            $manager->persist($figure);
+        }
+
+        $manager->flush();
+    }
+
+    private function createUsers(array $users){
         for ($i = 1; $i <= 4; $i++){
             $users['user'.$i] = (new User())->setPseudo('user'.$i)
                 ->setPassword((password_hash('user'.$i, PASSWORD_BCRYPT )))
                 ->setIsVerified(true)
                 ->setMailAddress('user'.$i.'@snowtricks.fr')
-                ->setCreationDate($faker->dateTimeBetween("-90 days", "-31 days"));
-            $manager->persist($users['user'.$i]);
+                ->setCreationDate($this->faker->dateTimeBetween("-90 days", "-31 days"));
         }
+    }
 
-        // Create fake categories
-        $categories = array();
-        $names      = array("Les grabs", "Les rotations", "Les flips", "Les rotations désaxées", "Les slides", "Les one foot tricks","Old school");
-        for ($i=0; $i < count($names); $i++) {
-            $categories[$names[$i]] = new Category();
-            $categories[$names[$i]]->setName($names[$i]);
-            $manager->persist($categories[$names[$i]]);
+    private function createCategories(array $categories){
+        foreach ($this::CATEGORIES as $name => $figures){
+            $categories[$name] = (new Category())->setName($name);
         }
-        $figure = new Figure();
-        $figure->setName("Japan")
-            ->setDescription("Saisie de l'avant de la planche, avec la main avant, du côté de la carre frontside")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les grabs"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            )
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Hallucinant")
-            )
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("J'ai enfin réussi")
-            )
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Magique")
-            );
+    }
 
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("540")
-            ->setDescription("cinq quatre pour un tour et demi")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les rotations"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
+    private function createFigures(array $figures, array $categories, array $users){
+        foreach ($this::CATEGORIES as $categoryName => $categoryFigures){
+            foreach ($categoryFigures as $figureName => $figureContent){
+                $figures[$figureName] = (new Figure())->setName($figureName)
+                    ->setDescription($figureContent)
+                    ->setCreationDate($this->faker->dateTimeBetween("-30 days", "now"))
+                    ->setCategory($categories[$categoryName]);
+                $this->addPicturesToFigure($figures[$figureName]);
+                $this->createCommentsForFigure($figures[$figureName], $users);
+            }
+        }
+    }
 
-        $figure = new Figure();
-        $figure->setName("900")
-            ->setDescription("pour deux tours et demi")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les rotations"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
+    private function createCommentsForFigure(Figure $figure,array $users){
+        $figureCommentsTexts = $this::COMMENTS;
+        shuffle($figureCommentsTexts);
+        foreach ($figureCommentsTexts as $commentText){
+            $figure->addComment((new Comment())->setCreationDate($this->faker->dateTimeBetween($figure->getCreationDate(), "now"))
                 ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
+                ->setContent($commentText)
             );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("Front flip")
-            ->setDescription("Comme un flip, mais en front")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les flips"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("Les rotations désaxées")
-            ->setDescription("Une rotation désaxée est une rotation initialement horizontale mais lancée avec un mouvement des épaules particulier qui désaxe la rotation. Il existe différents types de rotations désaxées (corkscrew ou cork, rodeo, misty, etc.) en fonction de la manière dont est lancé le buste. Certaines de ces rotations, bien qu'initialement horizontales, font passer la tête en bas.")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les rotations désaxées"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("Nose slide")
-            ->setDescription("Un slide consiste à glisser sur une barre de slide. Le slide se fait soit avec la planche dans l'axe de la barre, soit perpendiculaire, soit plus ou moins désaxé.")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les slides"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("One foot joe")
-            ->setDescription("?")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les one foot tricks"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("Backside Air")
-            ->setDescription("Dans l'air, mais à l'envers")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Old school"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
-        $figure = new Figure();
-        $figure->setName("Seatbelt")
-            ->setDescription("")
-            ->setCreationDate($faker->dateTimeBetween("-30 days"))
-            ->setCategory($categories["Les grabs"])
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addPicture((new Picture())->setUrl("/img/full/Seatbelt.jpg"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addVideo((new Video())->setUrl("https://www.youtube.com/watch?v=4vGEOYNGi_c"))
-            ->addComment((new Comment())->setCreationDate($faker->dateTimeBetween($figure->getCreationDate()))
-                ->setAuthor($users[array_rand($users)])
-                ->setContent("Excellent")
-            );
-        $manager->persist($figure);
+        }
+    }
 
-        $manager->flush();
+    private function addPicturesToFigure(Figure $figure){
+        foreach ($this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["images"] as $image){
+            $figure->addPicture(
+                (new Picture())->setUrl(
+                    $this->fileUploader->uploadPicture(
+                        new File($this->rootPublicDirectory.$image)
+                    )
+                )
+            );
+        }
     }
 }

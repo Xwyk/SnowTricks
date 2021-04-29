@@ -32,7 +32,7 @@ class FileUploader{
     /**
      * @param ArrayCollection $pictures
      */
-    public function uploadPictures(ArrayCollection $pictures){
+    public function uploadPictures($pictures){
         foreach ($pictures as $picture){
             $pictureToUpload = $picture->getImage();
             if ($pictureToUpload) {
@@ -47,7 +47,7 @@ class FileUploader{
      * @return string
      */
     public function uploadPicture(File $pictureToUpload): string{
-        $originalFilename = pathinfo($pictureToUpload->getClientOriginalName(), PATHINFO_FILENAME);
+        $originalFilename = pathinfo($pictureToUpload->getPathname(), PATHINFO_FILENAME);
 
         $sluggedFilename = $this->slugger->slug($originalFilename);
         $newFilename = $sluggedFilename.'-'.uniqid().'.'.$pictureToUpload->guessExtension();
