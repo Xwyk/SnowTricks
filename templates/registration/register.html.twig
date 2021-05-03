@@ -1,25 +1,34 @@
 {% extends 'base.html.twig' %}
-{% form_theme registrationForm 'bootstrap_4_layout.html.twig' %}
 
 {% block title %}Inscription{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+
+{% endblock %}
 
 {% block body %}
     {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
     {% endfor %}
-    <div class="w-100 text-center">
-        <h1>Inscription</h1>
-    </div>
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.pseudo, {
+    <form class="form-signin" method="get">
+        {{ form_start(form) }}
+        <div class="w-100 text-center">
+            <img class="mb-4" src="{{ asset('img/snowtricks_128.png') }}" alt="" width="72" height="72">
+            <h1>Inscription</h1>
+        </div>
+        {{ form_row(form.pseudo, {
             label: 'Pseudo'
         })  }}
-        {{ form_row(registrationForm.mailAddress, {
+        {{ form_row(form.mailAddress, {
             label: 'Adresse mail'
         })  }}
-        {{ form_row(registrationForm.plainPassword) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn btn-success">Créer un comtpe</button>
-    {{ form_end(registrationForm) }}
+        {{ form_row(form.plainPassword) }}
+        {{ form_row(form.agreeTerms) }}
+        <button class="btn btn-lg btn-success" type="submit">
+            Créer un compte
+        </button>
+        {{ form_end(form) }}
+    </form>
 {% endblock %}
