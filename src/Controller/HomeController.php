@@ -28,11 +28,6 @@ class HomeController extends AbstractController
      */
     public function home(FigureRepository $figureRepository): Response
     {
-//        $this->addFlash('info','Ceci est une info');
-//        $this->addFlash('success','Ceci est une validation');
-//        $this->addFlash('danger','Ceci est une erreur');
-//        $this->addFlash('warning','Ceci est un avertissement');
-
         $figures = $figureRepository->getLastFigures();
         return $this->render("home/home.html.twig", [
             "figures" => $figures

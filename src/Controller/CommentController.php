@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CommentController extends AbstractController
@@ -46,7 +47,6 @@ class CommentController extends AbstractController
      */
     public function addComment(ObjectManager $manager, Figure $figure, Request $request): Response
     {
-        // TODO verifier le contenu de content
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
@@ -57,23 +57,7 @@ class CommentController extends AbstractController
             $manager->flush();
             return $this->render("comment/loadMoreComments.html.twig", ['comments' => array($comment)]);
         }
-        return new Response("bite");
+        return new Response('I\'m a teapot', 418);
 
-    }
-
-    /**
-     * @Route("/figure/{id}-{slug}/after/{start}", name="loadMoreComments", methods={"POST"})
-     * @param Figure $figure
-     * @param CommentRepository $commentRepository
-     * @param int $start
-     * @return Response
-     */
-    public function getCommentsAfter(Figure $figure, CommentRepository $commentRepository, int $start): Response
-    {
-        $comments = $commentRepository->getCommentsAfterForFigure($figure,$start);
-        return $this->render(
-            "comment/loadMoreComments.html.twig",
-            ['comments' => $comments]
-        );
     }
 }

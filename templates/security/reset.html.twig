@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Connexion{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+{% endblock %}
+{% block body %}
+    <form class="form-signin" method="post">
+        <div class="w-100 text-center">
+            <img class="mb-4" src="{{ asset('img/snowtricks_128.png') }}" alt="" width="72" height="72">
+
+            <h1>Réinitialisation du mot de passe</h1>
+        </div>
+        <label for="inputPseudo">Pseudo</label>
+        <input type="text" name="pseudo" id="inputPseudo" class="form-control" required autofocus>
+        <p>Veuillez entrer votre pseudo. Si ce dernier correspond à un identifiant en base, un mail vous sera envoyé avec un lien de réinitialisation</p>
+        <button class="btn btn-lg btn-success" type="submit">
+            Connexion
+        </button>
+    </form>
+{% endblock %}

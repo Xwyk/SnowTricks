@@ -11,7 +11,8 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+        bind:
+            $rootPublicDirectory: '%kernel.project_dir%/public'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
@@ -31,10 +32,18 @@ services:
 
     App\Service\FileUploader:
         bind:
-            $root_public_directory: '%kernel.project_dir%/public'
+            $pictures_directory: '/img/full/'
+
+    App\DataFixtures\AppFixtures:
+        bind:
             $pictures_directory: '/img/full/'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\EntityListener\PictureListener:
+        tags:
+            - { name: doctrine.orm.entity_listener }
+
 
     Doctrine\Persistence\ObjectManager: '@doctrine.orm.default_entity_manager'

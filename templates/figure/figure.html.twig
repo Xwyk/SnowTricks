@@ -29,7 +29,7 @@
 
     </div>
     <hr>
-    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal collapse">
+    <div id="figureMedias" class="p-2 col-11 mx-auto mt-4 mb-1 bg-light fadeOnModal">
         <h2>Médias</h2>
         {% block pictures %}
             <div class="row" >
@@ -44,7 +44,7 @@
                     {% for video in figure.videos %}
                         <fieldset class="card col-3 p-2 m-2 align-middle">
                             <div class="card-img-top">
-                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" src="{{ video.url }}" allowfullscreen></iframe>
+                                <iframe id="video{{ video.id }}" width="100%" frameborder="0" src="{{ video.url|toEmbed }}" allowfullscreen></iframe>
                             </div>
                         </fieldset>
                     {% endfor %}
@@ -79,6 +79,7 @@
 
         {% if app.user %}
             {{ form_start(formComment, {'attr': {'id': 'commentForm'}}) }}
+            {{ form_errors(formComment) }}
             {{ form_row(formComment) }}
             {{ form_end(formComment) }}
         {% endif %}
@@ -144,6 +145,9 @@
                 data: formSerialize,
                 success: function(data, status){
                     $('#comments').prepend(data);
+                },
+                error: ()=>{
+                    alert("Le commentaire n'est pas valide");
                 }
             });
         });
