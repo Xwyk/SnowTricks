@@ -79,6 +79,15 @@ class AppFixtures extends Fixture
                 'images' => [
 
                 ]
+            ],
+            'Mc Twist'=> [
+                'description' => "Le Mc Twist est un flip (rotation verticale) agrémenté d'une vrille. Un saut plutôt périlleux réservé aux riders les plus confirmés. Le champion Shaun White s'est illustré par un Double Mc Twist 1260 lors de sa session de Half-Pipe aux Jeux Olympiques de Vancouver en 2010.",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
             ]
         ],
         "Les rotations désaxées"=>[
@@ -101,11 +110,9 @@ class AppFixtures extends Fixture
                 'images' => [
 
                 ]
-            ]
-        ],
-        "Les one foot tricks"=>[
-            'One foot joe'=> [
-                'description' => "?",
+            ],
+            'Lipslide'=> [
+                'description' => "Le lispslide consiste à glisser sur un obstacle en mettant la planche perpendiculaire à celui-ci. Un jib à 90 degrés en d'autres termes. Le lipslide peut se faire en avant ou en arrière. Frontside ou backside, donc.",
                 'videos' => [
 
                 ],
@@ -117,6 +124,15 @@ class AppFixtures extends Fixture
         "Old school"=>[
             'Backside Air'=> [
                 'description' => "Dans l'air, mais à l'envers",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
+            ],
+            'Air to Fakie'=> [
+                'description' => "Il s'agit d'une figure relativement simple, et plus précisément d'un saut sans rotation qui se fait généralement dans un pipe (un U). Le rider s'élance dans les airs et retombe dans le sens inverse.",
                 'videos' => [
 
                 ],
@@ -212,6 +228,13 @@ class AppFixtures extends Fixture
                         new File($this->rootPublicDirectory.$image)
                     )
                 )
+            );
+        }
+    }
+    private function addVideosToFigure(Figure $figure){
+        foreach ($this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["videos"] as $video){
+            $figure->addVideo(
+                (new Video())->setUrl($this->rootPublicDirectory.$video)
             );
         }
     }
