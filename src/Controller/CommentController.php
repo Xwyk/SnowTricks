@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommentController extends AbstractController
 {
     /**
-     * @Route("/figure/{id}-{slug}/moreComments/{start}", name="loadMoreComments", methods={"POST"})
+     * @Route("/figure/{id}-{slug}/moreComments/{start}", name="loadMoreComments", methods={"POST", "GET"})
      * @param Figure $figure
      * @param CommentRepository $commentRepository
      * @param int $start
