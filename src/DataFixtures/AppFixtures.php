@@ -16,9 +16,10 @@ use Symfony\Component\HttpFoundation\File\File;
 class AppFixtures extends Fixture
 {
     private FileUploader $fileUploader;
-    private string $rootPublicDirectory;
-    private string $pictures_directory;
+    private string $picturesDirectory;
     private \Faker\Generator $faker;
+    const  DEFAULT_IMAGE = "default.jpg";
+    const  DEFAULT_VIDEO = "https://www.youtube.com/watch?v=gbHU6J6PRRw";
     const COMMENTS = [
         'Excellent !',
         'Wow, halluciant',
@@ -58,7 +59,13 @@ class AppFixtures extends Fixture
         ],
         "Les rotations" => [
             '540' => [
-                'description' => "cinq quatre pour un tour et demi"
+                'description' => "cinq quatre pour un tour et demi",
+                'videos' => [
+
+                ],
+                'images' => [
+
+                ]
             ],
             '900'=> [
                 'description' => "pour deux tours et demi",
@@ -143,12 +150,11 @@ class AppFixtures extends Fixture
         ]
     ];
 
-    public function __construct(FileUploader $fileUploader, string $rootPublicDirectory, string $pictures_directory)
+    public function __construct(FileUploader $fileUploader, string $picturesDirectory)
     {
         $this->faker = \Faker\Factory::create("fr_FR");
         $this->fileUploader = $fileUploader;
-        $this->rootPublicDirectory = $rootPublicDirectory;
-        $this->pictures_directory = $pictures_directory;
+        $this->picturesDirectory = $picturesDirectory;
     }
 
     /**
@@ -163,7 +169,6 @@ class AppFixtures extends Fixture
         foreach ($users as $user){
             $manager->persist($user);
         }
-
         // Create fake categories
         $categories = array();
         $this->createCategories($categories);
@@ -180,7 +185,7 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
-    private function createUsers(array $users){
+    private function createUsers(array &$users){
         for ($i = 1; $i <= 4; $i++){
             $users['user'.$i] = (new User())->setPseudo('user'.$i)
                 ->setPassword((password_hash('user'.$i, PASSWORD_BCRYPT )))
@@ -190,20 +195,21 @@ class AppFixtures extends Fixture
         }
     }
 
-    private function createCategories(array $categories){
+    private function createCategories(array &$categories){
         foreach ($this::CATEGORIES as $name => $figures){
             $categories[$name] = (new Category())->setName($name);
         }
     }
 
-    private function createFigures(array $figures, array $categories, array $users){
+    private function createFigures(array &$figures, array $categories, array $users){
         foreach ($this::CATEGORIES as $categoryName => $categoryFigures){
             foreach ($categoryFigures as $figureName => $figureContent){
                 $figures[$figureName] = (new Figure())->setName($figureName)
-                    ->setDescription($figureContent)
+                    ->setDescription($figureContent['description'])
                     ->setCreationDate($this->faker->dateTimeBetween("-30 days", "now"))
                     ->setCategory($categories[$categoryName]);
                 $this->addPicturesToFigure($figures[$figureName]);
+                $this->addVideosToFigure($figures[$figureName]);
                 $this->createCommentsForFigure($figures[$figureName], $users);
             }
         }
@@ -221,20 +227,49 @@ class AppFixtures extends Fixture
     }
 
     private function addPicturesToFigure(Figure $figure){
-        foreach ($this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["images"] as $image){
+        $images = $this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["images"];
+        if (empty($images))
+        {
+            for ($i = 0; $i < 3; $i++){
+                $copiedPicture = $this->picturesDirectory.'/'.$figure->getName().'_'.$i.'jpg';
+                copy(
+                    $this->picturesDirectory.'/'.$this::DEFAULT_IMAGE,
+                    $copiedPicture
+                );
+                $figure->addPicture(
+                    (new Picture())->setUrl(
+                        $this->fileUploader->uploadPicture(
+                            new File($copiedPicture)
+                        )
+                    )
+                );
+            }
+            return;
+        }
+        foreach ($images as $image){
             $figure->addPicture(
                 (new Picture())->setUrl(
                     $this->fileUploader->uploadPicture(
-                        new File($this->rootPublicDirectory.$image)
+                        new File($this->picturesDirectory.'/'.$image)
                     )
                 )
             );
         }
     }
     private function addVideosToFigure(Figure $figure){
-        foreach ($this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["videos"] as $video){
+        $videos = $this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["videos"];
+        if (empty($videos))
+        {
+            for ($i = 0; $i < 3; $i++){
+                $figure->addVideo(
+                    (new Video())->setUrl($this::DEFAULT_VIDEO)
+                );
+            }
+            return;
+        }
+        foreach ($videos as $video){
             $figure->addVideo(
-                (new Video())->setUrl($this->rootPublicDirectory.$video)
+                (new Video())->setUrl($video)
             );
         }
     }
