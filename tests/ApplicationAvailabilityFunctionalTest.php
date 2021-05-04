@@ -61,12 +61,4 @@ class ApplicationAvailabilityFunctionalTest extends WebTestCase
             ->getQuery()
             ->getResult())[0];
     }
-
-    private function getFirstFigure(): Figure
-    {
-        return ($this->createMock(FigureRepository::class)->createQueryBuilder('f')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult())[0];
-    }
 }
