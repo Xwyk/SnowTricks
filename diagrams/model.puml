@@ -1,0 +1,29 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Figure
+class Video
+class Picture
+class Category
+class Comment
+class User
+class ResetPasswordToken
+class RegisterToken
+Figure "1" -- "*" Video : Contient >
+Figure "1" -- "*" Picture : Contient >
+Figure "*" -- "1" Category : Appartient >
+Figure "1" -- "*" Comment : Contient >
+Comment "*" -- "1" User : Rédige <
+User "1" -- "0..1" ResetPasswordToken : Appartient <
+User "1" -- "0..1" RegisterToken : Appartient <
+
+
+class Figure {
+int $id
+string name
+ description
+
+size()
+}
+
+@enduml
