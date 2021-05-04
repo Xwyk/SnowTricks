@@ -32,7 +32,7 @@ class AppFixtures extends Fixture
         'Je pensais ça possible uniquement dans les SSX',
         'Vivement que je reçoive mon nouveau snow',
         'Ce site est juste parfait pour tout partager',
-        'Un véritable puis de savoir est disponible',
+        'Un véritable puits de savoir est disponible',
         'Superbes explications',
         'Bravo',
         'Egalement réalisable en reverse !'];
@@ -226,8 +226,13 @@ class AppFixtures extends Fixture
         }
     }
 
+    /**
+     * Adds pictures to a Figure. If pictures src are set in constant array, adds those pictures will be copied & uploaded, else, add 3 times default picture
+     * @param Figure $figure
+     */
     private function addPicturesToFigure(Figure $figure){
         $images = $this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["images"];
+
         if (empty($images))
         {
             for ($i = 0; $i < 3; $i++){
@@ -246,6 +251,7 @@ class AppFixtures extends Fixture
             }
             return;
         }
+
         foreach ($images as $image){
             $figure->addPicture(
                 (new Picture())->setUrl(
@@ -256,6 +262,11 @@ class AppFixtures extends Fixture
             );
         }
     }
+
+    /**
+     * Adds videos to a Figure. If videos URLs are set in constant array, adds those urls, else, add 3 times default video
+     * @param Figure $figure
+     */
     private function addVideosToFigure(Figure $figure){
         $videos = $this::CATEGORIES[$figure->getCategory()->getName()][$figure->getName()]["videos"];
         if (empty($videos))
