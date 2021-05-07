@@ -3,9 +3,74 @@
 
 autonumber
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+actor Utilisateur as user
+actor System as system
+database Database as db
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+user -> system : click on edit button
+activate user
+activate system
+system -> system : check rights
+alt Authorized
+    user <-- system : displays edit interface
+    loop Until user click on save button
+        alt Upload picture(s)
+            loop while user wants upload pictures
+                user -> system : send picture
+                system -> system : check picture validity
+                alt Picture is valid
+                    user <-- system : return thumbnail
+                else Picture isn't valid
+                    user <-- system : display error on form
+                end
+            end
+        end
+        alt Remove picture(s)
+            loop while user wants remove pictures
+                user -> system : click on remove
+                user <-- system : delete picture from form
+            end
+        end
+        alt Add video(s)
+            loop while user wants add video
+                user -> system : type video IRL
+                system -> system : generate embed from URL
+                user <-- system : return embed thumbnail
+            end
+        end
+        alt Remove video(s)
+            loop while user wants remove videos
+                user -> system : click on remove
+                user <-- system : delete video from form
+            end
+        end
+        alt Set description
+            user -> system : set description
+        end
+        alt Set title
+            user -> system : set title
+        end
+        alt Set description
+            user -> system : set category
+        end
+        alt Click on save
+            user -> system : click on save button
+            system -> system : check data validity
+            alt Data valid
+                system -> db : send modifications
+                activate db
+                system <-- db : return code
+                deactivate db
+                user <-- system : redirect to homepage with flash message
+            else Data invalid
+                user <-- system : displays error(s) on form
+            end
+
+        end
+    end
+else Unauthorized
+    user <-- system : Redirect to 401
+    deactivate system
+    deactivate user
+end
 @enduml
