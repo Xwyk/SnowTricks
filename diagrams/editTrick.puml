@@ -33,7 +33,7 @@ alt Authorized
         end
         alt Add video(s)
             loop while user wants add video
-                user -> system : type video IRL
+                user -> system : type video URL
                 system -> system : generate embed from URL
                 user <-- system : return embed thumbnail
             end
@@ -47,10 +47,10 @@ alt Authorized
         alt Set description
             user -> system : set description
         end
-        alt Set title
-            user -> system : set title
+        alt Set name
+            user -> system : set name
         end
-        alt Set description
+        alt Set category
             user -> system : set category
         end
         alt Click on save
