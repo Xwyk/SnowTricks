@@ -3,7 +3,7 @@
 
 autonumber
 
-actor Utilisateur as user
+actor User as user
 actor System as system
 database Database as db
 
