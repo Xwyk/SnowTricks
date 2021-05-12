@@ -31,6 +31,9 @@ class CommentController extends AbstractController
     public function loadMoreComments(Figure $figure, CommentRepository $commentRepository, int $start): Response
     {
         $comments = $commentRepository->getNextCommmentsForFigure($figure,$start);
+        if (empty($comments)){
+            $this->addFlash('info','Tous les commentaires sont chargées');
+        }
         return $this->render(
             "comment/loadMoreComments.html.twig",
             ['comments' => $comments]
