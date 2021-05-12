@@ -2,29 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Figure;
-use App\Entity\Media;
-use App\Entity\Picture;
-use App\Entity\User;
-use App\Entity\Video;
 use App\Form\CommentType;
 use App\Form\FigureType;
-use App\Repository\CategoryRepository;
 use App\Repository\CommentRepository;
-use App\Repository\FigureRepository;
-use App\Service\DBQueries;
 use App\Service\FileUploader;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectManager;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FigureController extends AbstractController
 {
