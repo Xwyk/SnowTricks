@@ -29,7 +29,6 @@ class Figure {
     $comments : Comment[]
     $videos : Video[]
     $pictures : Picture[]
-    size()
 }
 
 class Category {
