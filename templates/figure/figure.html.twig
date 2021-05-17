@@ -147,6 +147,7 @@
                 url: url,
                 data: formSerialize,
                 success: function(data, status){
+                    $('#comment_content').val("");
                     $('#comments').prepend(data);
                 },
                 error: ()=>{
