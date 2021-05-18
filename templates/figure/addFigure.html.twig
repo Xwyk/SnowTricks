@@ -15,8 +15,9 @@
     </h1>
     <div class="row">
         <div class="col-12 col-sm-6">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
             {{ form_errors(form.name) }}
-            {{ form_row(form.name) }}
         </div>
         <div class="col-12 col-sm-6">
             {{ form_row(form.category) }}
